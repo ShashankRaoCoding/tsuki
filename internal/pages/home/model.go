@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/ShashankRaoCoding/tsuki/internal/msgs"
+	"github.com/ShashankRaoCoding/tsuki/internal/page"
 	"github.com/ShashankRaoCoding/tsuki/internal/styles"
 )
 
@@ -27,8 +28,8 @@ type Model struct {
 }
 
 // New returns an initialised home page model.
-func New() Model {
-	return Model{
+func New() *Model {
+	return &Model{
 		items: []menuItem{
 			{
 				label:       "📝  Notes",
@@ -48,7 +49,7 @@ func New() Model {
 func (m Model) Init() tea.Cmd { return nil }
 
 // Update handles key events for the home page.
-func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (page.Page, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -61,12 +62,12 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "enter", " ":
-			return m, navigateTo(m.items[m.cursor].page)
+			return &m, navigateTo(m.items[m.cursor].page)
 		case "q", "ctrl+c":
-			return m, tea.Quit
+			return &m, tea.Quit
 		}
 	}
-	return m, nil
+	return &m, nil
 }
 
 // View renders the home page.
@@ -111,6 +112,9 @@ func (m Model) View() string {
 	}
 	return content
 }
+
+// Title returns the display name of this page.
+func (m Model) Title() string { return "Home" }
 
 // SetSize stores the terminal dimensions for layout purposes.
 func (m *Model) SetSize(w, h int) {

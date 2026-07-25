@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/ShashankRaoCoding/tsuki/internal/msgs"
+	"github.com/ShashankRaoCoding/tsuki/internal/page"
 	"github.com/ShashankRaoCoding/tsuki/internal/pages/home"
 	"github.com/ShashankRaoCoding/tsuki/internal/pages/notes"
 	"github.com/ShashankRaoCoding/tsuki/internal/pages/settings"
@@ -15,22 +16,24 @@ import (
 )
 
 // App is the root model.  It owns all page models and delegates to the active one.
+// To add a new page: implement page.Page, assign it a PageID in msgs, and append
+// it to the pages slice in New() at the index matching that PageID.
 type App struct {
-	page     msgs.PageID
-	home     home.Model
-	notes    notes.Model
-	settings settings.Model
-	width    int
-	height   int
+	activePage msgs.PageID
+	pages      []page.Page
+	width      int
+	height     int
 }
 
 // New returns an initialised App.
 func New() App {
 	return App{
-		page:     msgs.Home,
-		home:     home.New(),
-		notes:    notes.New(),
-		settings: settings.New(),
+		activePage: msgs.Home,
+		pages: []page.Page{
+			home.New(),     // index msgs.Home
+			notes.New(),    // index msgs.Notes
+			settings.New(), // index msgs.Settings
+		},
 	}
 }
 
@@ -43,25 +46,18 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		a.width = msg.Width
 		a.height = msg.Height
-		a.home.SetSize(msg.Width, msg.Height)
-		a.notes.SetSize(msg.Width, msg.Height)
-		a.settings.SetSize(msg.Width, msg.Height)
+		for _, p := range a.pages {
+			p.SetSize(msg.Width, msg.Height)
+		}
 		return a, nil
 
 	case msgs.NavigateMsg:
-		a.page = msg.To
+		a.activePage = msg.To
 		return a, nil
 	}
 
 	var cmd tea.Cmd
-	switch a.page {
-	case msgs.Home:
-		a.home, cmd = a.home.Update(msg)
-	case msgs.Notes:
-		a.notes, cmd = a.notes.Update(msg)
-	case msgs.Settings:
-		a.settings, cmd = a.settings.Update(msg)
-	}
+	a.pages[a.activePage], cmd = a.pages[a.activePage].Update(msg)
 	return a, cmd
 }
 
@@ -69,15 +65,15 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (a App) View() string {
 	if a.width == 0 {
 		// Terminal size not yet known — render page without chrome.
-		return a.pageView()
+		return a.pages[a.activePage].View()
 	}
 
 	// Top status bar.
 	bar := a.statusBar()
 
 	// Page content with padding.
-	content := a.pageView()
-	if a.page != msgs.Home {
+	content := a.pages[a.activePage].View()
+	if a.activePage != msgs.Home {
 		// Non-home pages are padded from the top-left rather than centred.
 		content = lipgloss.NewStyle().
 			PaddingTop(1).
@@ -90,38 +86,17 @@ func (a App) View() string {
 
 // statusBar returns a full-width top bar showing the current page.
 func (a App) statusBar() string {
-	label := map[msgs.PageID]string{
-		msgs.Home:     "Home",
-		msgs.Notes:    "Notes",
-		msgs.Settings: "Settings",
-	}[a.page]
-
 	left := styles.Title.Render("🌙 Tsuki")
-	right := styles.Muted.Render(label)
+	right := styles.Muted.Render(a.pages[a.activePage].Title())
 
 	gap := a.width - lipgloss.Width(left) - lipgloss.Width(right) - 2
 	if gap < 1 {
 		gap = 1
 	}
 
-	bar := lipgloss.NewStyle().
+	return lipgloss.NewStyle().
 		Background(lipgloss.Color("#1E1E2E")).
 		Foreground(styles.ColorText).
 		Width(a.width).
 		Render(left + strings.Repeat(" ", gap) + right)
-
-	return bar
-}
-
-// pageView returns the View() output of the currently active page.
-func (a App) pageView() string {
-	switch a.page {
-	case msgs.Home:
-		return a.home.View()
-	case msgs.Notes:
-		return a.notes.View()
-	case msgs.Settings:
-		return a.settings.View()
-	}
-	return ""
 }
