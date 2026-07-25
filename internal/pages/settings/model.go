@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/ShashankRaoCoding/tsuki/internal/msgs"
+	"github.com/ShashankRaoCoding/tsuki/internal/page"
 	"github.com/ShashankRaoCoding/tsuki/internal/styles"
 )
 
@@ -26,8 +27,8 @@ type Model struct {
 }
 
 // New returns an initialised settings page model.
-func New() Model {
-	return Model{
+func New() *Model {
+	return &Model{
 		settings: []setting{
 			{
 				key:         "Show timestamps",
@@ -52,7 +53,7 @@ func New() Model {
 func (m Model) Init() tea.Cmd { return nil }
 
 // Update handles key events for the settings page.
-func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (page.Page, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -67,10 +68,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "enter", " ":
 			m.settings[m.cursor].enabled = !m.settings[m.cursor].enabled
 		case "esc":
-			return m, navigateTo(msgs.Home)
+			return &m, navigateTo(msgs.Home)
 		}
 	}
-	return m, nil
+	return &m, nil
 }
 
 // View renders the settings page.
@@ -108,6 +109,9 @@ func (m Model) View() string {
 
 	return b.String()
 }
+
+// Title returns the display name of this page.
+func (m Model) Title() string { return "Settings" }
 
 // SetSize stores the terminal dimensions.
 func (m *Model) SetSize(w, h int) {

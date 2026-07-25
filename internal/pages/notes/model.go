@@ -10,6 +10,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/ShashankRaoCoding/tsuki/internal/msgs"
+	"github.com/ShashankRaoCoding/tsuki/internal/page"
 	"github.com/ShashankRaoCoding/tsuki/internal/styles"
 )
 
@@ -31,7 +32,7 @@ type Model struct {
 }
 
 // New returns an initialised notes page model.
-func New() Model {
+func New() *Model {
 	ti := textinput.New()
 	ti.Placeholder = "Write your note here…"
 	ti.CharLimit = 200
@@ -39,7 +40,7 @@ func New() Model {
 	ti.PromptStyle = styles.Title
 	ti.TextStyle = styles.Normal
 
-	return Model{
+	return &Model{
 		notes: []Note{
 			{Content: "Welcome to Tsuki! 🌙", CreatedAt: time.Now()},
 		},
@@ -51,7 +52,7 @@ func New() Model {
 func (m Model) Init() tea.Cmd { return nil }
 
 // Update handles key events for the notes page.
-func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (page.Page, tea.Cmd) {
 	var cmd tea.Cmd
 
 	if keyMsg, ok := msg.(tea.KeyMsg); ok {
@@ -61,7 +62,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.adding = false
 				m.input.Reset()
 				m.input.Blur()
-				return m, nil
+				return &m, nil
 			case "enter":
 				val := strings.TrimSpace(m.input.Value())
 				if val != "" {
@@ -75,11 +76,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.input.Reset()
 				m.input.Blur()
 				m.adding = false
-				return m, nil
+				return &m, nil
 			}
 			// Forward all other keys to the text input.
 			m.input, cmd = m.input.Update(msg)
-			return m, cmd
+			return &m, cmd
 		}
 
 		// Navigation mode.
@@ -107,11 +108,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.feedback = "Note deleted"
 			}
 		case "esc":
-			return m, navigateTo(msgs.Home)
+			return &m, navigateTo(msgs.Home)
 		}
 	}
 
-	return m, cmd
+	return &m, cmd
 }
 
 // View renders the notes page.
@@ -161,6 +162,9 @@ func (m Model) View() string {
 
 	return b.String()
 }
+
+// Title returns the display name of this page.
+func (m Model) Title() string { return "Notes" }
 
 // SetSize stores the terminal dimensions and adjusts the input width.
 func (m *Model) SetSize(w, h int) {
