@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
+	"github.com/ShashankRaoCoding/tsuki/internal/shell"
 	"github.com/ShashankRaoCoding/tsuki/internal/styles"
 )
 
@@ -31,20 +32,21 @@ var (
 type App struct {
 	tabs         []Tab
 	activeTab    int
-	focusZone    FocusZone
+	focusZone    shell.FocusZone
 	width        int
 	height       int
 	tabBarHeight int
-	nextTabID    int
+	options      []appOption
 }
 
-// New returns an initialised App with a single tab.
+// New returns an initialised App with a single launcher tab.
 func New() App {
+	options := defaultAppOptions()
 	return App{
-		tabs:      []Tab{newDefaultTab(1)},
+		tabs:      []Tab{newLauncherTab(options)},
 		activeTab: 0,
-		focusZone: FocusTabRight,
-		nextTabID: 2,
+		focusZone: shell.FocusTabRight,
+		options:   options,
 	}
 }
 
@@ -68,6 +70,9 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			a.tabBarHeight = 1
 		}
 		return a, a.resizeTabs()
+	case shell.StartAppMsg:
+		next, cmd := a.startApp(msg.AppID)
+		return next, cmd
 	case tea.KeyMsg:
 		if next, cmd, handled := a.handleGlobalKey(msg); handled {
 			return next, cmd
@@ -104,8 +109,7 @@ func (a App) handleGlobalKey(msg tea.KeyMsg) (App, tea.Cmd, bool) {
 
 	switch msg.String() {
 	case "ctrl+t":
-		tab := newDefaultTab(a.nextTabID)
-		a.nextTabID++
+		tab := newLauncherTab(a.options)
 		a.tabs = append(a.tabs, tab)
 		a.activeTab = len(a.tabs) - 1
 		a.focusZone = defaultFocusZone(tab)
@@ -121,8 +125,7 @@ func (a App) handleGlobalKey(msg tea.KeyMsg) (App, tea.Cmd, bool) {
 		return a, tea.Batch(cmds...), true
 	case "ctrl+w":
 		if len(a.tabs) == 1 {
-			a.tabs[0] = newDefaultTab(a.nextTabID)
-			a.nextTabID++
+			a.tabs[0] = newLauncherTab(a.options)
 			a.activeTab = 0
 			a.focusZone = defaultFocusZone(a.tabs[0])
 
@@ -212,28 +215,56 @@ func (a App) renderTabBar() string {
 	return tabBarStyle.Width(a.width).Render(row + strings.Repeat(" ", gap))
 }
 
-func defaultFocusZone(tab Tab) FocusZone {
-	if tab.left != nil {
-		return FocusTabRight
+func defaultAppOptions() []appOption {
+	return []appOption{
+		{
+			id:          "helix",
+			title:       "Helix",
+			description: "Open the file browser on the left and the Helix editor on the right.",
+		},
 	}
-	return FocusTabRight
 }
 
-func normalizeFocusZone(zone FocusZone, tab Tab) FocusZone {
+func (a App) startApp(appID string) (App, tea.Cmd) {
+	var tab Tab
+
+	switch appID {
+	case "helix":
+		tab = newHelixTab()
+	default:
+		return a, nil
+	}
+
+	a.tabs[a.activeTab] = tab
+	a.focusZone = defaultFocusZone(tab)
+
+	cmds := []tea.Cmd{tab.Init()}
+	if a.width > 0 || a.height > 0 {
+		cmds = append(cmds, a.resizeTabs())
+	}
+
+	return a, tea.Batch(cmds...)
+}
+
+func defaultFocusZone(tab Tab) shell.FocusZone {
+	return shell.FocusTabRight
+}
+
+func normalizeFocusZone(zone shell.FocusZone, tab Tab) shell.FocusZone {
 	switch zone {
-	case FocusGlobal:
-		return FocusGlobal
-	case FocusTabLeft:
+	case shell.FocusGlobal:
+		return shell.FocusGlobal
+	case shell.FocusTabLeft:
 		if tab.left != nil {
-			return FocusTabLeft
+			return shell.FocusTabLeft
 		}
-		return FocusTabRight
-	case FocusTabRight:
-		return FocusTabRight
+		return shell.FocusTabRight
+	case shell.FocusTabRight:
+		return shell.FocusTabRight
 	default:
 		if tab.left != nil {
-			return FocusTabLeft
+			return shell.FocusTabLeft
 		}
-		return FocusTabRight
+		return shell.FocusTabRight
 	}
 }

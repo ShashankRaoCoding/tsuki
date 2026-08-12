@@ -1,10 +1,11 @@
 package app
 
 import (
-	"fmt"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+
+	"github.com/ShashankRaoCoding/tsuki/internal/shell"
+	helixapp "github.com/ShashankRaoCoding/tsuki/tabs/helix"
 )
 
 const minSidebarWidth = 24
@@ -12,19 +13,26 @@ const minSidebarWidth = 24
 // Tab contains the optional left pane and required right pane for one shell tab.
 type Tab struct {
 	title      string
-	left       Widget
-	right      Widget
+	left       shell.Widget
+	right      shell.Widget
 	width      int
 	height     int
 	leftWidth  int
 	rightWidth int
 }
 
-func newDefaultTab(id int) Tab {
+func newLauncherTab(options []appOption) Tab {
 	return Tab{
-		title: fmt.Sprintf("Tab %d", id),
-		left:  NewCWDWidget(),
-		right: NewHelixWidget(),
+		title: "New Tab",
+		right: newLauncherWidget(options),
+	}
+}
+
+func newHelixTab() Tab {
+	return Tab{
+		title: "Helix",
+		left:  helixapp.NewFilesWidget(),
+		right: helixapp.NewEditorWidget(),
 	}
 }
 
@@ -38,7 +46,7 @@ func (t Tab) Init() tea.Cmd {
 }
 
 // Update handles focus changes, cross-pane messages, resize, and widget forwarding.
-func (t Tab) Update(msg tea.Msg, zone FocusZone) (Tab, FocusZone, tea.Cmd) {
+func (t Tab) Update(msg tea.Msg, zone shell.FocusZone) (Tab, shell.FocusZone, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		cmd := t.applySize(msg.Width, msg.Height)
@@ -48,9 +56,9 @@ func (t Tab) Update(msg tea.Msg, zone FocusZone) (Tab, FocusZone, tea.Cmd) {
 			return t, nextZone, nil
 		}
 		return t.forwardKey(msg, zone)
-	case OpenFileMsg:
+	case shell.OpenFileMsg:
 		return t.deliverToRight(msg, normalizeFocusZone(zone, t))
-	case SetTabTitleMsg:
+	case shell.SetTabTitleMsg:
 		t.title = msg.Title
 		return t, normalizeFocusZone(zone, t), nil
 	default:
@@ -104,36 +112,36 @@ func (t *Tab) applySize(width, height int) tea.Cmd {
 	return tea.Batch(t.resizeLeft(), t.resizeRight())
 }
 
-func (t Tab) toggleFocusZone(zone FocusZone, msg tea.KeyMsg) (FocusZone, bool) {
+func (t Tab) toggleFocusZone(zone shell.FocusZone, msg tea.KeyMsg) (shell.FocusZone, bool) {
 	switch msg.String() {
 	case "alt+left":
 		if t.left != nil {
-			return FocusTabLeft, true
+			return shell.FocusTabLeft, true
 		}
-		return FocusTabRight, true
+		return shell.FocusTabRight, true
 	case "alt+right":
-		return FocusTabRight, true
+		return shell.FocusTabRight, true
 	default:
 		return zone, false
 	}
 }
 
-func (t *Tab) forwardKey(msg tea.KeyMsg, zone FocusZone) (Tab, FocusZone, tea.Cmd) {
-	target := FocusTargetForKey(zone, msg, t.left != nil)
+func (t *Tab) forwardKey(msg tea.KeyMsg, zone shell.FocusZone) (Tab, shell.FocusZone, tea.Cmd) {
+	target := shell.FocusTargetForKey(zone, msg, t.left != nil)
 
 	switch target {
-	case WidgetTargetLeft:
+	case shell.WidgetTargetLeft:
 		if t.left == nil {
 			return *t, normalizeFocusZone(zone, *t), nil
 		}
-		if raw, ok := t.left.(RawKeyWidget); ok {
+		if raw, ok := t.left.(shell.RawKeyWidget); ok {
 			return *t, normalizeFocusZone(zone, *t), raw.WriteKey(msg)
 		}
 		var cmd tea.Cmd
 		t.left, cmd = t.left.Update(msg)
 		return *t, normalizeFocusZone(zone, *t), cmd
-	case WidgetTargetRight:
-		if raw, ok := t.right.(RawKeyWidget); ok {
+	case shell.WidgetTargetRight:
+		if raw, ok := t.right.(shell.RawKeyWidget); ok {
 			return *t, normalizeFocusZone(zone, *t), raw.WriteKey(msg)
 		}
 		var cmd tea.Cmd
@@ -144,7 +152,7 @@ func (t *Tab) forwardKey(msg tea.KeyMsg, zone FocusZone) (Tab, FocusZone, tea.Cm
 	}
 }
 
-func (t *Tab) deliverToRight(msg tea.Msg, zone FocusZone) (Tab, FocusZone, tea.Cmd) {
+func (t *Tab) deliverToRight(msg tea.Msg, zone shell.FocusZone) (Tab, shell.FocusZone, tea.Cmd) {
 	if t.right == nil {
 		return *t, zone, nil
 	}
