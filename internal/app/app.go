@@ -29,13 +29,13 @@ var (
 
 // App is the root Bubble Tea model for the tab shell.
 type App struct {
-	tabs       []Tab
-	activeTab  int
-	focusZone  FocusZone
-	width      int
-	height     int
+	tabs         []Tab
+	activeTab    int
+	focusZone    FocusZone
+	width        int
+	height       int
 	tabBarHeight int
-	nextTabID  int
+	nextTabID    int
 }
 
 // New returns an initialised App with a single tab.
