@@ -44,6 +44,10 @@ func (w *launcherWidget) Update(msg tea.Msg) (shell.Widget, tea.Cmd) {
 			if w.cursor < len(w.options)-1 {
 				w.cursor++
 			}
+		case "tab":
+			if len(w.options) > 0 {
+				w.cursor = (w.cursor + 1) % len(w.options)
+			}
 		case "enter", " ":
 			if len(w.options) == 0 {
 				return w, nil

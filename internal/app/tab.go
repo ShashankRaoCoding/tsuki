@@ -15,27 +15,30 @@ const minSidebarWidth = 24
 
 // Tab contains the optional left pane and required right pane for one shell tab.
 type Tab struct {
-	title      string
-	left       shell.Widget
-	right      shell.Widget
-	width      int
-	height     int
-	leftWidth  int
-	rightWidth int
+	title        string
+	left         shell.Widget
+	right        shell.Widget
+	width        int
+	height       int
+	leftWidth    int
+	rightWidth   int
+	tabComplete  bool
 }
 
 func newLauncherTab(options []appOption) Tab {
 	return Tab{
-		title: "New Tab",
-		right: newLauncherWidget(options),
+		title:       "New Tab",
+		right:       newLauncherWidget(options),
+		tabComplete: true,
 	}
 }
 
 func newHelixTab() Tab {
 	return Tab{
-		title: "Helix",
-		left:  helixapp.NewFilesWidget(),
-		right: helixapp.NewEditorWidget(),
+		title:       "Helix",
+		left:        helixapp.NewFilesWidget(),
+		right:       helixapp.NewEditorWidget(),
+		tabComplete: true,
 	}
 }
 
@@ -151,6 +154,9 @@ func (t Tab) toggleFocusZone(zone shell.FocusZone, msg tea.KeyMsg) (shell.FocusZ
 }
 
 func (t *Tab) forwardKey(msg tea.KeyMsg, zone shell.FocusZone) (Tab, shell.FocusZone, tea.Cmd) {
+	if msg.String() == "tab" && !t.tabComplete {
+		return *t, normalizeFocusZone(zone, *t), nil
+	}
 	target := shell.FocusTargetForKey(zone, msg, t.left != nil)
 
 	switch target {
