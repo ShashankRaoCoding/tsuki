@@ -55,7 +55,11 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		return m, nil
 	case launchCLIRequest:
-		return m, runCLI(msg.Config)
+		newTab := newCLITab(msg.Config)
+		newTab.SetSize(m.width, m.bodyHeight())
+		m.tabs = append(m.tabs, newTab)
+		m.focus = len(m.tabs) - 1
+		return m, newTab.Init()
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+q":
@@ -113,7 +117,7 @@ func (m *model) View() string {
 	}
 
 	header := strings.Join(tabHeaders, styles.Divider.Render(" | "))
-	help := styles.Help.Render("enter: launch selected CLI • ctrl+q: quit")
+	help := styles.Help.Render("tab/shift+tab or ←/→: switch • ctrl+t: launcher • ctrl+w: close tab • ctrl+q: quit")
 
 	return strings.Join([]string{header, "", m.tabs[m.focus].View(), "", help}, "\n")
 }

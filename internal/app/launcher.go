@@ -29,7 +29,6 @@ type launcherModel struct {
 	list    list.Model
 	configs []cliConfig
 	loadErr error
-	runErr  error
 }
 
 func newLauncherModel(configs []cliConfig, loadErr error) *launcherModel {
@@ -68,12 +67,6 @@ func (l *launcherModel) SetSize(width, height int) {
 }
 
 func (l *launcherModel) Update(msg tea.Msg) tea.Cmd {
-	switch msg := msg.(type) {
-	case cliLaunchResult:
-		l.runErr = msg.err
-		return nil
-	}
-
 	var cmd tea.Cmd
 	l.list, cmd = l.list.Update(msg)
 
@@ -93,12 +86,9 @@ func (l *launcherModel) Update(msg tea.Msg) tea.Cmd {
 }
 
 func (l *launcherModel) View() string {
-	parts := []string{styles.Subtitle.Render("Select a CLI and press Enter to launch it.")}
+	parts := []string{styles.Subtitle.Render("Select a CLI and press Enter to open a tab.")}
 	if l.loadErr != nil {
 		parts = append(parts, styles.ErrorStyle.Render(fmt.Sprintf("config load error: %v", l.loadErr)))
-	}
-	if l.runErr != nil {
-		parts = append(parts, styles.ErrorStyle.Render(fmt.Sprintf("launch error: %v", l.runErr)))
 	}
 	if len(l.configs) == 0 {
 		parts = append(parts, styles.Muted.Render("No CLI definitions found in ./CLIs"))
@@ -117,6 +107,60 @@ func (c cliItem) FilterValue() string { return c.cfg.Name + " " + c.cfg.Syntax }
 
 type cliLaunchResult struct {
 	err error
+}
+
+type cliTab struct {
+	cfg     cliConfig
+	height  int
+	running bool
+	lastErr error
+}
+
+func newCLITab(cfg cliConfig) *cliTab {
+	return &cliTab{cfg: cfg}
+}
+
+func (c *cliTab) Title() string {
+	return c.cfg.Name
+}
+
+func (c *cliTab) Init() tea.Cmd {
+	c.running = true
+	c.lastErr = nil
+	return runCLI(c.cfg)
+}
+
+func (c *cliTab) SetSize(_ int, height int) {
+	c.height = height
+}
+
+func (c *cliTab) Update(msg tea.Msg) tea.Cmd {
+	switch msg := msg.(type) {
+	case cliLaunchResult:
+		c.running = false
+		c.lastErr = msg.err
+		return nil
+	case tea.KeyMsg:
+		if msg.String() == "enter" && !c.running {
+			c.running = true
+			c.lastErr = nil
+			return runCLI(c.cfg)
+		}
+	}
+	return nil
+}
+
+func (c *cliTab) View() string {
+	header := styles.Title.Render(c.cfg.Name) + "  " + styles.Muted.Render("("+c.cfg.Description+")")
+	body := styles.Muted.Render("Press Enter to relaunch.")
+	if c.running {
+		body = styles.Muted.Render("Running…")
+	} else if c.lastErr != nil {
+		body = styles.ErrorStyle.Render(fmt.Sprintf("Exited with error: %v", c.lastErr))
+	} else {
+		body = styles.Muted.Render("Exited successfully. Press Enter to relaunch.")
+	}
+	return strings.Join([]string{header, "", body}, "\n")
 }
 
 func runCLI(cfg cliConfig) tea.Cmd {
