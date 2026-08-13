@@ -1,8 +1,10 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -11,6 +13,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/creack/pty"
 
 	"github.com/ShashankRaoCoding/tsuki/internal/styles"
 )
@@ -66,6 +69,8 @@ func (l *launcherModel) SetSize(width, height int) {
 	l.list.SetSize(width, height)
 }
 
+func (l *launcherModel) Close() {}
+
 func (l *launcherModel) Update(msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	l.list, cmd = l.list.Update(msg)
@@ -105,15 +110,26 @@ func (c cliItem) Title() string       { return c.cfg.Name }
 func (c cliItem) Description() string { return c.cfg.Description }
 func (c cliItem) FilterValue() string { return c.cfg.Name + " " + c.cfg.Syntax }
 
-type cliLaunchResult struct {
+type cliOutputMsg struct {
+	chunk string
+}
+
+type cliExitMsg struct {
 	err error
 }
 
 type cliTab struct {
 	cfg     cliConfig
+	width   int
 	height  int
 	running bool
 	lastErr error
+	output  string
+
+	cmd    *exec.Cmd
+	cancel context.CancelFunc
+	pty    *os.File
+	events chan tea.Msg
 }
 
 func newCLITab(cfg cliConfig) *cliTab {
@@ -125,26 +141,40 @@ func (c *cliTab) Title() string {
 }
 
 func (c *cliTab) Init() tea.Cmd {
-	c.running = true
-	c.lastErr = nil
-	return runCLI(c.cfg)
+	return c.launch()
 }
 
-func (c *cliTab) SetSize(_ int, height int) {
+func (c *cliTab) SetSize(width, height int) {
+	c.width = width
 	c.height = height
+	c.resizePTY()
+}
+
+func (c *cliTab) Close() {
+	if c.cancel != nil {
+		c.cancel()
+	}
+	if c.pty != nil {
+		_ = c.pty.Close()
+	}
 }
 
 func (c *cliTab) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
-	case cliLaunchResult:
+	case cliOutputMsg:
+		c.appendOutput(msg.chunk)
+		return c.waitForEvent()
+	case cliExitMsg:
 		c.running = false
 		c.lastErr = msg.err
+		c.releaseProcess()
 		return nil
 	case tea.KeyMsg:
 		if msg.String() == "enter" && !c.running {
-			c.running = true
-			c.lastErr = nil
-			return runCLI(c.cfg)
+			return c.launch()
+		}
+		if c.running {
+			c.forwardKey(msg)
 		}
 	}
 	return nil
@@ -152,29 +182,180 @@ func (c *cliTab) Update(msg tea.Msg) tea.Cmd {
 
 func (c *cliTab) View() string {
 	header := styles.Title.Render(c.cfg.Name) + "  " + styles.Muted.Render("("+c.cfg.Description+")")
-	body := styles.Muted.Render("Press Enter to relaunch.")
+	status := styles.Muted.Render("Press Enter to relaunch.")
 	if c.running {
-		body = styles.Muted.Render("Running…")
+		status = styles.SuccessStyle.Render("Running in panel")
 	} else if c.lastErr != nil {
-		body = styles.ErrorStyle.Render(fmt.Sprintf("Exited with error: %v", c.lastErr))
+		status = styles.ErrorStyle.Render(fmt.Sprintf("Exited with error: %v", c.lastErr))
 	} else {
-		body = styles.Muted.Render("Exited successfully. Press Enter to relaunch.")
+		status = styles.SuccessStyle.Render("Exited successfully. Press Enter to relaunch.")
 	}
-	return strings.Join([]string{header, "", body}, "\n")
+	body := strings.TrimRight(c.panelBody(), "\n")
+	if body == "" {
+		body = styles.Muted.Render("No output yet.")
+	}
+
+	return strings.Join([]string{header, status, "", body}, "\n")
 }
 
-func runCLI(cfg cliConfig) tea.Cmd {
-	return func() tea.Msg {
-		parts := strings.Fields(cfg.Syntax)
-		if len(parts) == 0 {
-			return cliLaunchResult{err: fmt.Errorf("empty syntax for %s", cfg.Name)}
-		}
-		cmd := exec.Command(parts[0], parts[1:]...) // #nosec G204 -- command is loaded from local config
-		execCmd := tea.ExecProcess(cmd, func(err error) tea.Msg {
-			return cliLaunchResult{err: err}
-		})
-		return execCmd()
+func (c *cliTab) launch() tea.Cmd {
+	c.releaseProcess()
+
+	parts := strings.Fields(c.cfg.Syntax)
+	if len(parts) == 0 {
+		c.running = false
+		c.lastErr = fmt.Errorf("empty syntax for %s", c.cfg.Name)
+		return nil
 	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cmd := exec.CommandContext(ctx, parts[0], parts[1:]...) // #nosec G204 -- command is loaded from local config
+	ptyFile, err := pty.Start(cmd)
+	if err != nil {
+		cancel()
+		c.running = false
+		c.lastErr = err
+		return nil
+	}
+
+	c.running = true
+	c.lastErr = nil
+	c.output = ""
+	c.cmd = cmd
+	c.cancel = cancel
+	c.pty = ptyFile
+	c.events = make(chan tea.Msg, 64)
+	c.resizePTY()
+
+	go c.readOutput()
+	go c.waitForExit()
+
+	return c.waitForEvent()
+}
+
+func (c *cliTab) readOutput() {
+	buf := make([]byte, 4096)
+	for {
+		n, err := c.pty.Read(buf)
+		if n > 0 {
+			c.events <- cliOutputMsg{chunk: string(buf[:n])}
+		}
+		if err != nil {
+			if err != io.EOF {
+				c.events <- cliOutputMsg{chunk: "\n[pty read error] " + err.Error() + "\n"}
+			}
+			return
+		}
+	}
+}
+
+func (c *cliTab) waitForExit() {
+	err := c.cmd.Wait()
+	c.events <- cliExitMsg{err: err}
+	close(c.events)
+}
+
+func (c *cliTab) waitForEvent() tea.Cmd {
+	return func() tea.Msg {
+		msg, ok := <-c.events
+		if !ok {
+			return nil
+		}
+		return msg
+	}
+}
+
+func (c *cliTab) appendOutput(chunk string) {
+	c.output += chunk
+	const maxOutputSize = 200_000
+	if len(c.output) > maxOutputSize {
+		c.output = c.output[len(c.output)-maxOutputSize:]
+	}
+}
+
+func (c *cliTab) panelBody() string {
+	if c.output == "" {
+		return ""
+	}
+
+	rows := c.height - 5
+	if rows < 1 {
+		rows = 1
+	}
+
+	output := strings.ReplaceAll(c.output, "\r\n", "\n")
+	lines := strings.Split(output, "\n")
+	if len(lines) > rows {
+		lines = lines[len(lines)-rows:]
+	}
+	return strings.Join(lines, "\n")
+}
+
+func (c *cliTab) forwardKey(msg tea.KeyMsg) {
+	if c.pty == nil {
+		return
+	}
+
+	var payload string
+	switch msg.String() {
+	case "enter":
+		payload = "\n"
+	case "backspace":
+		payload = "\x7f"
+	case "esc":
+		payload = "\x1b"
+	case "up":
+		payload = "\x1b[A"
+	case "down":
+		payload = "\x1b[B"
+	default:
+		if strings.HasPrefix(msg.String(), "ctrl+") && len(msg.String()) == len("ctrl+a") {
+			ctrl := msg.String()[5]
+			if ctrl >= 'a' && ctrl <= 'z' {
+				payload = string(rune(ctrl - 'a' + 1))
+			}
+		}
+		if payload == "" {
+			payload = string(msg.Runes)
+		}
+	}
+
+	if payload != "" {
+		_, _ = c.pty.Write([]byte(payload))
+	}
+}
+
+func (c *cliTab) resizePTY() {
+	if c.pty == nil {
+		return
+	}
+
+	rows := c.height - 5
+	if rows < 1 {
+		rows = 1
+	}
+	cols := c.width
+	if cols < 1 {
+		cols = 1
+	}
+
+	_ = pty.Setsize(c.pty, &pty.Winsize{
+		Rows: uint16(rows),
+		Cols: uint16(cols),
+	})
+}
+
+func (c *cliTab) releaseProcess() {
+	if c.cancel != nil {
+		c.cancel()
+		c.cancel = nil
+	}
+	if c.pty != nil {
+		_ = c.pty.Close()
+		c.pty = nil
+	}
+	c.cmd = nil
+	c.events = nil
 }
 
 func loadCLIConfigs(dir string) ([]cliConfig, error) {
