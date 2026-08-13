@@ -1,7 +1,6 @@
 package app
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -11,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/ShashankRaoCoding/tsuki/internal/styles"
@@ -107,31 +105,19 @@ func (c cliItem) Title() string       { return c.cfg.Name }
 func (c cliItem) Description() string { return c.cfg.Description }
 func (c cliItem) FilterValue() string { return c.cfg.Name + " " + c.cfg.Syntax }
 
-type execResult struct {
-	prompt string
-	output string
-	err    error
+type cliLaunchResult struct {
+	err error
 }
 
 type cliTab struct {
 	cfg     cliConfig
-	input   textinput.Model
-	history []string
 	height  int
 	running bool
+	lastErr error
 }
 
 func newCLITab(cfg cliConfig) *cliTab {
-	input := textinput.New()
-	input.Placeholder = fmt.Sprintf("%s <command>", cfg.Syntax)
-	input.Focus()
-	input.CharLimit = 512
-	input.Prompt = "> "
-
-	return &cliTab{
-		cfg:   cfg,
-		input: input,
-	}
+	return &cliTab{cfg: cfg}
 }
 
 func (c *cliTab) Title() string {
@@ -139,78 +125,56 @@ func (c *cliTab) Title() string {
 }
 
 func (c *cliTab) Init() tea.Cmd {
-	return textinput.Blink
+	c.running = true
+	c.lastErr = nil
+	return runCLI(c.cfg)
 }
 
 func (c *cliTab) SetSize(_ int, height int) {
 	c.height = height
 }
 
-func runCommand(syntax, command string) tea.Cmd {
-	prompt := fmt.Sprintf("%s %s", syntax, command)
-	return func() tea.Msg {
-		args := strings.Fields(command)
-		cmd := exec.Command(syntax, args...) // #nosec G204 -- user-provided shell command
-		var buf bytes.Buffer
-		cmd.Stdout = &buf
-		cmd.Stderr = &buf
-		err := cmd.Run()
-		return execResult{prompt: prompt, output: buf.String(), err: err}
-	}
-}
-
 func (c *cliTab) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
-	case execResult:
+	case cliLaunchResult:
 		c.running = false
-		c.history = append(c.history, styles.Muted.Render("$ "+msg.prompt))
-		if msg.output != "" {
-			c.history = append(c.history, strings.TrimRight(msg.output, "\n"))
-		}
-		if msg.err != nil {
-			c.history = append(c.history, styles.ErrorStyle.Render(msg.err.Error()))
-		}
+		c.lastErr = msg.err
 		return nil
-
 	case tea.KeyMsg:
-		if msg.String() == "enter" {
-			command := strings.TrimSpace(c.input.Value())
-			c.input.SetValue("")
-			if command == "" {
-				return nil
-			}
+		if msg.String() == "enter" && !c.running {
 			c.running = true
-			return runCommand(c.cfg.Syntax, command)
+			c.lastErr = nil
+			return runCLI(c.cfg)
 		}
 	}
-
-	var cmd tea.Cmd
-	c.input, cmd = c.input.Update(msg)
-	return cmd
+	return nil
 }
 
 func (c *cliTab) View() string {
 	header := styles.Title.Render(c.cfg.Name) + "  " + styles.Muted.Render("("+c.cfg.Description+")")
-	body := styles.Muted.Render("No commands yet.")
-	if len(c.history) > 0 {
-		start := 0
-		visible := c.height - 4
-		if visible < 1 {
-			visible = 1
-		}
-		if len(c.history) > visible {
-			start = len(c.history) - visible
-		}
-		body = strings.Join(c.history[start:], "\n")
-	}
-
-	var prompt string
+	body := styles.Muted.Render("Press Enter to relaunch.")
 	if c.running {
-		prompt = styles.Muted.Render("running…")
+		body = styles.Muted.Render("Running…")
+	} else if c.lastErr != nil {
+		body = styles.ErrorStyle.Render(fmt.Sprintf("Exited with error: %v", c.lastErr))
 	} else {
-		prompt = c.input.View()
+		body = styles.Muted.Render("Exited successfully. Press Enter to relaunch.")
 	}
-	return strings.Join([]string{header, "", body, "", prompt}, "\n")
+	return strings.Join([]string{header, "", body}, "\n")
+}
+
+func runCLI(cfg cliConfig) tea.Cmd {
+	return func() tea.Msg {
+		parts := strings.Fields(cfg.Syntax)
+		if len(parts) == 0 {
+			return cliLaunchResult{err: fmt.Errorf("empty syntax for %s", cfg.Name)}
+		}
+		cmd := exec.Command(parts[0], parts[1:]...) // #nosec G204 -- command is loaded from local config
+		execCmd := tea.ExecProcess(cmd, func(err error) tea.Msg {
+			return cliLaunchResult{err: err}
+		})
+		return execCmd()
+	}
 }
 
 func loadCLIConfigs(dir string) ([]cliConfig, error) {
