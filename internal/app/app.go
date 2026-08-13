@@ -108,6 +108,8 @@ func (a App) handleGlobalKey(msg tea.KeyMsg) (App, tea.Cmd, bool) {
 	}
 
 	switch msg.String() {
+	case "ctrl+q":
+		return a, tea.Quit, true
 	case "ctrl+t":
 		tab := newLauncherTab(a.options)
 		a.tabs = append(a.tabs, tab)
@@ -222,21 +224,6 @@ func defaultAppOptions() []appOption {
 			title:       "Helix",
 			description: "Open the file browser on the left and the Helix editor on the right.",
 		},
-		{
-			id:          "notes",
-			title:       "Notes",
-			description: "Write and browse your lunar notes.",
-		},
-		{
-			id:          "settings",
-			title:       "Settings",
-			description: "Configure your preferences.",
-		},
-		{
-			id:          "home",
-			title:       "Home",
-			description: "Return to the Tsuki landing page.",
-		},
 	}
 }
 
@@ -246,12 +233,6 @@ func (a App) startApp(appID string) (App, tea.Cmd) {
 	switch appID {
 	case "helix":
 		tab = newHelixTab()
-	case "notes":
-		tab = newNotesTab()
-	case "settings":
-		tab = newSettingsTab()
-	case "home":
-		tab = newHomeTab()
 	default:
 		return a, nil
 	}

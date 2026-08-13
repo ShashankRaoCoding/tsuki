@@ -59,7 +59,7 @@ func (w *launcherWidget) View() string {
 	lines := []string{
 		styles.Title.Render("Start an app"),
 		"",
-		styles.Muted.Render("Open a tab target from /tabs."),
+		styles.Muted.Render("Launch Helix in this tab."),
 		"",
 	}
 
@@ -78,7 +78,7 @@ func (w *launcherWidget) View() string {
 		lines = append(lines, "")
 	}
 
-	lines = append(lines, styles.Help.Render("↑/↓ move • enter start • ctrl+t new tab • ctrl+w close"))
+	lines = append(lines, styles.Help.Render("↑/↓ move • enter start • ctrl+t new tab • ctrl+w close • ctrl+q quit"))
 	content := lipgloss.NewStyle().Padding(1, 2).Render(strings.Join(lines, "\n"))
 
 	if w.width > 0 && w.height > 0 {
