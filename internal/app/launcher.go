@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/ShashankRaoCoding/tsuki/internal/styles"
@@ -106,20 +108,34 @@ func (c cliItem) Description() string { return c.cfg.Description }
 func (c cliItem) FilterValue() string { return c.cfg.Name + " " + c.cfg.Syntax }
 
 type execResult struct {
-	command string
-	err     error
+	prompt string
+	output string
+	err    error
 }
 
 type cliTab struct {
 	cfg     cliConfig
+	input   textinput.Model
 	history []string
 	height  int
 	running bool
 }
 
 func newCLITab(cfg cliConfig) *cliTab {
+	input := textinput.New()
+	input.Placeholder = fmt.Sprintf("%s <args>", strings.TrimSpace(cfg.Syntax))
+	input.Focus()
+	input.CharLimit = 512
+
+	promptLabel := strings.ToLower(strings.TrimSpace(cfg.Name))
+	if promptLabel == "" {
+		promptLabel = "cli"
+	}
+	input.Prompt = promptLabel + "> "
+
 	return &cliTab{
-		cfg: cfg,
+		cfg:   cfg,
+		input: input,
 	}
 }
 
@@ -128,54 +144,67 @@ func (c *cliTab) Title() string {
 }
 
 func (c *cliTab) Init() tea.Cmd {
-	c.running = true
-	return runCommand(c.cfg.Syntax)
+	return textinput.Blink
 }
 
 func (c *cliTab) SetSize(_ int, height int) {
 	c.height = height
 }
 
-func runCommand(command string) tea.Cmd {
+func runCommand(syntax, command string) tea.Cmd {
+	syntax = strings.TrimSpace(syntax)
 	command = strings.TrimSpace(command)
-	if command == "" {
+	if syntax == "" {
 		return func() tea.Msg {
-			return execResult{command: command, err: fmt.Errorf("no command configured")}
+			return execResult{prompt: command, err: fmt.Errorf("no command configured")}
 		}
 	}
 
-	parts := strings.Fields(command)
-	cmd := exec.Command(parts[0], parts[1:]...) // #nosec G204 -- command comes from local CLI config
-	return tea.ExecProcess(cmd, func(err error) tea.Msg {
-		return execResult{command: command, err: err}
-	})
+	prompt := fmt.Sprintf("%s %s", syntax, command)
+	return func() tea.Msg {
+		args := strings.Fields(command)
+		cmd := exec.Command(syntax, args...) // #nosec G204 -- user-provided shell arguments
+		var buf bytes.Buffer
+		cmd.Stdout = &buf
+		cmd.Stderr = &buf
+		err := cmd.Run()
+		return execResult{prompt: prompt, output: buf.String(), err: err}
+	}
 }
 
 func (c *cliTab) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case execResult:
 		c.running = false
-		c.history = append(c.history, styles.Muted.Render("$ "+msg.command))
+		c.history = append(c.history, styles.Muted.Render("$ "+msg.prompt))
+		if msg.output != "" {
+			c.history = append(c.history, strings.TrimRight(msg.output, "\n"))
+		}
 		if msg.err != nil {
 			c.history = append(c.history, styles.ErrorStyle.Render(msg.err.Error()))
-		} else {
-			c.history = append(c.history, styles.Muted.Render("app exited"))
 		}
 		return nil
 
 	case tea.KeyMsg:
 		if msg.String() == "enter" && !c.running {
+			command := strings.TrimSpace(c.input.Value())
+			c.input.SetValue("")
+			if command == "" {
+				return nil
+			}
 			c.running = true
-			return runCommand(c.cfg.Syntax)
+			return runCommand(c.cfg.Syntax, command)
 		}
 	}
 
-	return nil
+	var cmd tea.Cmd
+	c.input, cmd = c.input.Update(msg)
+	return cmd
 }
 
 func (c *cliTab) View() string {
 	header := styles.Title.Render(c.cfg.Name) + "  " + styles.Muted.Render("("+c.cfg.Description+")")
-	body := styles.Muted.Render("App launches automatically when the tab opens.")
+	body := styles.Muted.Render("No commands yet.")
 	if len(c.history) > 0 {
 		start := 0
 		visible := c.height - 4
@@ -190,9 +219,9 @@ func (c *cliTab) View() string {
 
 	var prompt string
 	if c.running {
-		prompt = styles.Muted.Render("running app… close it to return")
+		prompt = styles.Muted.Render("running…")
 	} else {
-		prompt = styles.Muted.Render("press Enter to relaunch")
+		prompt = c.input.View()
 	}
 	return strings.Join([]string{header, "", body, "", prompt}, "\n")
 }
