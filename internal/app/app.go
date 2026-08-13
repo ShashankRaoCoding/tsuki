@@ -16,6 +16,7 @@ type tab interface {
 	Update(tea.Msg) tea.Cmd
 	View() string
 	SetSize(width, height int)
+	Close()
 }
 
 type model struct {
@@ -63,9 +64,11 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+q":
+			m.closeAllTabs()
 			return m, tea.Quit
 		case "ctrl+w":
 			if m.focus > 0 && len(m.tabs) > 1 {
+				m.tabs[m.focus].Close()
 				m.tabs = append(m.tabs[:m.focus], m.tabs[m.focus+1:]...)
 				if m.focus >= len(m.tabs) {
 					m.focus = len(m.tabs) - 1
@@ -135,4 +138,10 @@ func parseTabIndex(input string) (int, bool) {
 		return 0, false
 	}
 	return n - 1, true
+}
+
+func (m *model) closeAllTabs() {
+	for _, t := range m.tabs {
+		t.Close()
+	}
 }
