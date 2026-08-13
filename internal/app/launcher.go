@@ -123,7 +123,11 @@ type cliTab struct {
 
 func newCLITab(cfg cliConfig) *cliTab {
 	input := textinput.New()
-	input.Placeholder = fmt.Sprintf("%s <command>", cfg.Syntax)
+	if strings.TrimSpace(cfg.Syntax) != "" {
+		input.Placeholder = fmt.Sprintf("Run shell command (e.g. %s)", cfg.Syntax)
+	} else {
+		input.Placeholder = "Run shell command"
+	}
 	input.Focus()
 	input.CharLimit = 512
 	input.Prompt = "> "
@@ -146,11 +150,10 @@ func (c *cliTab) SetSize(_ int, height int) {
 	c.height = height
 }
 
-func runCommand(syntax, command string) tea.Cmd {
-	prompt := fmt.Sprintf("%s %s", syntax, command)
+func runCommand(command string) tea.Cmd {
+	prompt := command
 	return func() tea.Msg {
-		args := strings.Fields(command)
-		cmd := exec.Command(syntax, args...) // #nosec G204 -- user-provided shell command
+		cmd := exec.Command("sh", "-lc", command) // #nosec G204 -- user-provided shell command
 		var buf bytes.Buffer
 		cmd.Stdout = &buf
 		cmd.Stderr = &buf
@@ -180,7 +183,7 @@ func (c *cliTab) Update(msg tea.Msg) tea.Cmd {
 				return nil
 			}
 			c.running = true
-			return runCommand(c.cfg.Syntax, command)
+			return runCommand(command)
 		}
 	}
 
