@@ -79,15 +79,17 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.focus = 0
 			return m, nil
 		case "tab", "right":
-			if len(m.tabs) > 0 {
+			_, isLauncher := m.tabs[m.focus].(*launcherModel)
+			if isLauncher && len(m.tabs) > 0 {
 				m.focus = (m.focus + 1) % len(m.tabs)
+				return m, nil
 			}
-			return m, nil
 		case "shift+tab", "left":
-			if len(m.tabs) > 0 {
+			_, isLauncher := m.tabs[m.focus].(*launcherModel)
+			if isLauncher && len(m.tabs) > 0 {
 				m.focus = (m.focus - 1 + len(m.tabs)) % len(m.tabs)
+				return m, nil
 			}
-			return m, nil
 		default:
 			if idx, ok := parseTabIndex(msg.String()); ok && idx < len(m.tabs) {
 				m.focus = idx

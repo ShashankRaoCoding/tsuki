@@ -165,7 +165,7 @@ func (c *cliTab) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case cliOutputMsg:
 		c.appendOutput(msg.chunk)
-		return c.waitForEvent()
+		return c.waitForEvent(c.events)
 	case cliExitMsg:
 		c.running = false
 		c.lastErr = msg.err
@@ -229,37 +229,38 @@ func (c *cliTab) launch() tea.Cmd {
 	c.events = make(chan tea.Msg, 64)
 	c.resizePTY()
 
-	go c.readOutput()
-	go c.waitForExit()
+	events := c.events
+	go c.readOutput(ptyFile, events)
+	go c.waitForExit(cmd, events)
 
-	return c.waitForEvent()
+	return c.waitForEvent(events)
 }
 
-func (c *cliTab) readOutput() {
+func (c *cliTab) readOutput(ptyFile *os.File, events chan tea.Msg) {
 	buf := make([]byte, 4096)
 	for {
-		n, err := c.pty.Read(buf)
+		n, err := ptyFile.Read(buf)
 		if n > 0 {
-			c.events <- cliOutputMsg{chunk: string(buf[:n])}
+			events <- cliOutputMsg{chunk: string(buf[:n])}
 		}
 		if err != nil {
 			if err != io.EOF {
-				c.events <- cliOutputMsg{chunk: "\n[pty read error] " + err.Error() + "\n"}
+				events <- cliOutputMsg{chunk: "\n[pty read error] " + err.Error() + "\n"}
 			}
 			return
 		}
 	}
 }
 
-func (c *cliTab) waitForExit() {
-	err := c.cmd.Wait()
-	c.events <- cliExitMsg{err: err}
-	close(c.events)
+func (c *cliTab) waitForExit(cmd *exec.Cmd, events chan tea.Msg) {
+	err := cmd.Wait()
+	events <- cliExitMsg{err: err}
+	close(events)
 }
 
-func (c *cliTab) waitForEvent() tea.Cmd {
+func (c *cliTab) waitForEvent(events chan tea.Msg) tea.Cmd {
 	return func() tea.Msg {
-		msg, ok := <-c.events
+		msg, ok := <-events
 		if !ok {
 			return nil
 		}
