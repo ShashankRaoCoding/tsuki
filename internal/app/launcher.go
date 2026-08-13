@@ -132,6 +132,8 @@ type cliTab struct {
 	events chan tea.Msg
 }
 
+const cliPanelChromeRows = 3
+
 func newCLITab(cfg cliConfig) *cliTab {
 	return &cliTab{cfg: cfg}
 }
@@ -278,13 +280,10 @@ func (c *cliTab) panelBody() string {
 		return ""
 	}
 
-	rows := c.height - 5
-	if rows < 1 {
-		rows = 1
-	}
-
 	output := strings.ReplaceAll(c.output, "\r\n", "\n")
+	output = strings.ReplaceAll(output, "\r", "\n")
 	lines := strings.Split(output, "\n")
+	rows := c.panelRows()
 	if len(lines) > rows {
 		lines = lines[len(lines)-rows:]
 	}
@@ -330,10 +329,7 @@ func (c *cliTab) resizePTY() {
 		return
 	}
 
-	rows := c.height - 5
-	if rows < 1 {
-		rows = 1
-	}
+	rows := c.panelRows()
 	cols := c.width
 	if cols < 1 {
 		cols = 1
@@ -356,6 +352,14 @@ func (c *cliTab) releaseProcess() {
 	}
 	c.cmd = nil
 	c.events = nil
+}
+
+func (c *cliTab) panelRows() int {
+	rows := c.height - cliPanelChromeRows
+	if rows < 1 {
+		return 1
+	}
+	return rows
 }
 
 func loadCLIConfigs(dir string) ([]cliConfig, error) {
