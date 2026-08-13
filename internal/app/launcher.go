@@ -22,6 +22,7 @@ type cliConfig struct {
 	Name        string
 	Syntax      string
 	Description string
+	Fullscreen  bool
 }
 
 type launchCLIRequest struct {
@@ -132,7 +133,10 @@ type cliTab struct {
 	events chan tea.Msg
 }
 
-func newCLITab(cfg cliConfig) *cliTab {
+func newCLITab(cfg cliConfig) tab {
+	if cfg.Fullscreen {
+		return newFullscreenCLITab(cfg)
+	}
 	return &cliTab{cfg: cfg}
 }
 
@@ -308,6 +312,10 @@ func (c *cliTab) forwardKey(msg tea.KeyMsg) {
 		payload = "\x1b[A"
 	case "down":
 		payload = "\x1b[B"
+	case "right":
+		payload = "\x1b[C"
+	case "left":
+		payload = "\x1b[D"
 	default:
 		if strings.HasPrefix(msg.String(), "ctrl+") && len(msg.String()) == len("ctrl+a") {
 			ctrl := msg.String()[5]
@@ -358,6 +366,70 @@ func (c *cliTab) releaseProcess() {
 	c.events = nil
 }
 
+// fullscreenCLITab hands the terminal to a full-screen TUI process (e.g. Helix)
+// using tea.ExecProcess so Bubble Tea suspends while the process runs.
+type fullscreenCLITab struct {
+	cfg     cliConfig
+	lastErr error
+	exited  bool
+}
+
+func newFullscreenCLITab(cfg cliConfig) *fullscreenCLITab {
+	return &fullscreenCLITab{cfg: cfg}
+}
+
+func (f *fullscreenCLITab) Title() string { return f.cfg.Name }
+
+func (f *fullscreenCLITab) Init() tea.Cmd {
+	return f.execCmd()
+}
+
+func (f *fullscreenCLITab) SetSize(_, _ int) {}
+
+func (f *fullscreenCLITab) Close() {}
+
+func (f *fullscreenCLITab) Update(msg tea.Msg) tea.Cmd {
+	switch msg := msg.(type) {
+	case cliExitMsg:
+		f.exited = true
+		f.lastErr = msg.err
+		return nil
+	case tea.KeyMsg:
+		if msg.String() == "enter" {
+			f.exited = false
+			f.lastErr = nil
+			return f.execCmd()
+		}
+	}
+	return nil
+}
+
+func (f *fullscreenCLITab) View() string {
+	header := styles.Title.Render(f.cfg.Name) + "  " + styles.Muted.Render("("+f.cfg.Description+")")
+	var status string
+	if !f.exited {
+		status = styles.SuccessStyle.Render("Launching…")
+	} else if f.lastErr != nil {
+		status = styles.ErrorStyle.Render(fmt.Sprintf("Exited with error: %v", f.lastErr))
+	} else {
+		status = styles.SuccessStyle.Render("Exited successfully. Press Enter to relaunch.")
+	}
+	return strings.Join([]string{header, status}, "\n")
+}
+
+func (f *fullscreenCLITab) execCmd() tea.Cmd {
+	parts := strings.Fields(f.cfg.Syntax)
+	if len(parts) == 0 {
+		f.exited = true
+		f.lastErr = fmt.Errorf("empty syntax for %s", f.cfg.Name)
+		return nil
+	}
+	cmd := exec.Command(parts[0], parts[1:]...) // #nosec G204 -- command is loaded from local config
+	return tea.ExecProcess(cmd, func(err error) tea.Msg {
+		return cliExitMsg{err: err}
+	})
+}
+
 func loadCLIConfigs(dir string) ([]cliConfig, error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -380,6 +452,7 @@ func loadCLIConfigs(dir string) ([]cliConfig, error) {
 			Syntax      string `json:"syntax"`
 			Description string `json:"description"`
 			DescAlt     string `json:"Description"`
+			Fullscreen  bool   `json:"fullscreen"`
 		}
 		if unmarshalErr := json.Unmarshal(content, &raw); unmarshalErr != nil {
 			return nil, fmt.Errorf("%s: %w", entry.Name(), unmarshalErr)
@@ -394,6 +467,7 @@ func loadCLIConfigs(dir string) ([]cliConfig, error) {
 			Name:        strings.TrimSpace(raw.Name),
 			Syntax:      strings.TrimSpace(raw.Syntax),
 			Description: description,
+			Fullscreen:  raw.Fullscreen,
 		})
 	}
 
