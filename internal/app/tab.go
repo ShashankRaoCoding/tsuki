@@ -4,6 +4,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
+	"github.com/ShashankRaoCoding/tsuki/internal/pages/home"
+	"github.com/ShashankRaoCoding/tsuki/internal/pages/notes"
+	"github.com/ShashankRaoCoding/tsuki/internal/pages/settings"
 	"github.com/ShashankRaoCoding/tsuki/internal/shell"
 	helixapp "github.com/ShashankRaoCoding/tsuki/tabs/helix"
 )
@@ -33,6 +36,27 @@ func newHelixTab() Tab {
 		title: "Helix",
 		left:  helixapp.NewFilesWidget(),
 		right: helixapp.NewEditorWidget(),
+	}
+}
+
+func newNotesTab() Tab {
+	return Tab{
+		title: "Notes",
+		right: newPageWidget(notes.New()),
+	}
+}
+
+func newSettingsTab() Tab {
+	return Tab{
+		title: "Settings",
+		right: newPageWidget(settings.New()),
+	}
+}
+
+func newHomeTab() Tab {
+	return Tab{
+		title: "Home",
+		right: newPageWidget(home.New()),
 	}
 }
 
