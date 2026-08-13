@@ -1,7 +1,6 @@
 package app
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -11,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/ShashankRaoCoding/tsuki/internal/styles"
@@ -31,6 +29,7 @@ type launcherModel struct {
 	list    list.Model
 	configs []cliConfig
 	loadErr error
+	runErr  error
 }
 
 func newLauncherModel(configs []cliConfig, loadErr error) *launcherModel {
@@ -69,6 +68,12 @@ func (l *launcherModel) SetSize(width, height int) {
 }
 
 func (l *launcherModel) Update(msg tea.Msg) tea.Cmd {
+	switch msg := msg.(type) {
+	case cliLaunchResult:
+		l.runErr = msg.err
+		return nil
+	}
+
 	var cmd tea.Cmd
 	l.list, cmd = l.list.Update(msg)
 
@@ -88,9 +93,12 @@ func (l *launcherModel) Update(msg tea.Msg) tea.Cmd {
 }
 
 func (l *launcherModel) View() string {
-	parts := []string{styles.Subtitle.Render("Select a CLI and press Enter to open a tab.")}
+	parts := []string{styles.Subtitle.Render("Select a CLI and press Enter to launch it.")}
 	if l.loadErr != nil {
 		parts = append(parts, styles.ErrorStyle.Render(fmt.Sprintf("config load error: %v", l.loadErr)))
+	}
+	if l.runErr != nil {
+		parts = append(parts, styles.ErrorStyle.Render(fmt.Sprintf("launch error: %v", l.runErr)))
 	}
 	if len(l.configs) == 0 {
 		parts = append(parts, styles.Muted.Render("No CLI definitions found in ./CLIs"))
@@ -107,110 +115,22 @@ func (c cliItem) Title() string       { return c.cfg.Name }
 func (c cliItem) Description() string { return c.cfg.Description }
 func (c cliItem) FilterValue() string { return c.cfg.Name + " " + c.cfg.Syntax }
 
-type execResult struct {
-	prompt string
-	output string
-	err    error
+type cliLaunchResult struct {
+	err error
 }
 
-type cliTab struct {
-	cfg     cliConfig
-	input   textinput.Model
-	history []string
-	height  int
-	running bool
-}
-
-func newCLITab(cfg cliConfig) *cliTab {
-	input := textinput.New()
-	input.Placeholder = fmt.Sprintf("%s <command>", cfg.Syntax)
-	input.Focus()
-	input.CharLimit = 512
-	input.Prompt = "> "
-
-	return &cliTab{
-		cfg:   cfg,
-		input: input,
-	}
-}
-
-func (c *cliTab) Title() string {
-	return c.cfg.Name
-}
-
-func (c *cliTab) Init() tea.Cmd {
-	return textinput.Blink
-}
-
-func (c *cliTab) SetSize(_ int, height int) {
-	c.height = height
-}
-
-func runCommand(syntax, command string) tea.Cmd {
-	prompt := fmt.Sprintf("%s %s", syntax, command)
+func runCLI(cfg cliConfig) tea.Cmd {
 	return func() tea.Msg {
-		args := strings.Fields(command)
-		cmd := exec.Command(syntax, args...) // #nosec G204 -- user-provided shell command
-		var buf bytes.Buffer
-		cmd.Stdout = &buf
-		cmd.Stderr = &buf
-		err := cmd.Run()
-		return execResult{prompt: prompt, output: buf.String(), err: err}
+		parts := strings.Fields(cfg.Syntax)
+		if len(parts) == 0 {
+			return cliLaunchResult{err: fmt.Errorf("empty syntax for %s", cfg.Name)}
+		}
+		cmd := exec.Command(parts[0], parts[1:]...) // #nosec G204 -- command is loaded from local config
+		execCmd := tea.ExecProcess(cmd, func(err error) tea.Msg {
+			return cliLaunchResult{err: err}
+		})
+		return execCmd()
 	}
-}
-
-func (c *cliTab) Update(msg tea.Msg) tea.Cmd {
-	switch msg := msg.(type) {
-	case execResult:
-		c.running = false
-		c.history = append(c.history, styles.Muted.Render("$ "+msg.prompt))
-		if msg.output != "" {
-			c.history = append(c.history, strings.TrimRight(msg.output, "\n"))
-		}
-		if msg.err != nil {
-			c.history = append(c.history, styles.ErrorStyle.Render(msg.err.Error()))
-		}
-		return nil
-
-	case tea.KeyMsg:
-		if msg.String() == "enter" {
-			command := strings.TrimSpace(c.input.Value())
-			c.input.SetValue("")
-			if command == "" {
-				return nil
-			}
-			c.running = true
-			return runCommand(c.cfg.Syntax, command)
-		}
-	}
-
-	var cmd tea.Cmd
-	c.input, cmd = c.input.Update(msg)
-	return cmd
-}
-
-func (c *cliTab) View() string {
-	header := styles.Title.Render(c.cfg.Name) + "  " + styles.Muted.Render("("+c.cfg.Description+")")
-	body := styles.Muted.Render("No commands yet.")
-	if len(c.history) > 0 {
-		start := 0
-		visible := c.height - 4
-		if visible < 1 {
-			visible = 1
-		}
-		if len(c.history) > visible {
-			start = len(c.history) - visible
-		}
-		body = strings.Join(c.history[start:], "\n")
-	}
-
-	var prompt string
-	if c.running {
-		prompt = styles.Muted.Render("running…")
-	} else {
-		prompt = c.input.View()
-	}
-	return strings.Join([]string{header, "", body, "", prompt}, "\n")
 }
 
 func loadCLIConfigs(dir string) ([]cliConfig, error) {
