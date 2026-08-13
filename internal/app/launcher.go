@@ -1,9 +1,11 @@
 package app
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -105,11 +107,18 @@ func (c cliItem) Title() string       { return c.cfg.Name }
 func (c cliItem) Description() string { return c.cfg.Description }
 func (c cliItem) FilterValue() string { return c.cfg.Name + " " + c.cfg.Syntax }
 
+type execResult struct {
+	prompt string
+	output string
+	err    error
+}
+
 type cliTab struct {
 	cfg     cliConfig
 	input   textinput.Model
 	history []string
 	height  int
+	running bool
 }
 
 func newCLITab(cfg cliConfig) *cliTab {
@@ -137,15 +146,42 @@ func (c *cliTab) SetSize(_ int, height int) {
 	c.height = height
 }
 
+func runCommand(syntax, command string) tea.Cmd {
+	prompt := fmt.Sprintf("%s %s", syntax, command)
+	return func() tea.Msg {
+		args := strings.Fields(command)
+		cmd := exec.Command(syntax, args...) // #nosec G204 -- user-provided shell command
+		var buf bytes.Buffer
+		cmd.Stdout = &buf
+		cmd.Stderr = &buf
+		err := cmd.Run()
+		return execResult{prompt: prompt, output: buf.String(), err: err}
+	}
+}
+
 func (c *cliTab) Update(msg tea.Msg) tea.Cmd {
-	if keyMsg, ok := msg.(tea.KeyMsg); ok && keyMsg.String() == "enter" {
-		command := strings.TrimSpace(c.input.Value())
-		if command != "" {
-			line := fmt.Sprintf("%s %s", c.cfg.Syntax, command)
-			c.history = append(c.history, line)
+	switch msg := msg.(type) {
+	case execResult:
+		c.running = false
+		c.history = append(c.history, styles.Muted.Render("$ "+msg.prompt))
+		if msg.output != "" {
+			c.history = append(c.history, strings.TrimRight(msg.output, "\n"))
 		}
-		c.input.SetValue("")
+		if msg.err != nil {
+			c.history = append(c.history, styles.ErrorStyle.Render(msg.err.Error()))
+		}
 		return nil
+
+	case tea.KeyMsg:
+		if msg.String() == "enter" {
+			command := strings.TrimSpace(c.input.Value())
+			c.input.SetValue("")
+			if command == "" {
+				return nil
+			}
+			c.running = true
+			return runCommand(c.cfg.Syntax, command)
+		}
 	}
 
 	var cmd tea.Cmd
@@ -168,7 +204,12 @@ func (c *cliTab) View() string {
 		body = strings.Join(c.history[start:], "\n")
 	}
 
-	prompt := c.input.View()
+	var prompt string
+	if c.running {
+		prompt = styles.Muted.Render("running…")
+	} else {
+		prompt = c.input.View()
+	}
 	return strings.Join([]string{header, "", body, "", prompt}, "\n")
 }
 
