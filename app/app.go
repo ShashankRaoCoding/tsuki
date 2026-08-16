@@ -1,10 +1,9 @@
 package app
 
 import (
-	// bubble tea related 
 	tab tsuki/tab
 	msgs tsuki/msgs 
-	shared tsuki/shared 
+	appConfig tsuki/shared/appConfig 
 )
 
 // func New() App {
@@ -17,17 +16,22 @@ import (
 type App struct {
 	Tabs []tab.Tab
 	Focus int // the tab index that is focussed 
-	Apps map[string]shared.AppConfig
+	Apps map[string]appConfig.AppConfig
 	Msgs chan msgs.Msg
 }
 
 // type appConfig map[string]string
 
 func New() {
-	// a := App{} 
-	// Focus: 0 
+	apps, err := LoadApps() 
+	launcher, err := tab.New(apps['tsuki-launcher'])
+	a := App{
+		Tabs: []tab.Tab{launcher}, 
+		Focus: 0, 
+		Apps: apps,
+		Msgs: make(chan msgs.Msg, 1000) 
+	} 
 	// Create msgs chan 
-	// reads apps/*.json to AppConfig structs and adds the AppConfig structs for each .json to a.Apps 
 	// starts tab 'launcher' 
 }
 
