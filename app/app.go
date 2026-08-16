@@ -23,19 +23,27 @@ type App struct {
 
 // type appConfig map[string]string
 
-func (a *App) Start() {
-	// reads CLIs/* and adds the CLIs 
+func New() {
+	// a := App{} 
+	// Focus: 0 
+	// Create msgs chan 
+	// reads apps/*.json to AppConfig structs and adds the AppConfig structs for each .json to a.Apps 
 	// starts tab 'launcher' 
 }
 
-func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	// if reserved, interpret
-	// else forward to focus tab with
-	// a.Tabs[a.Focus] = a.Tabs[a.Focus].Update(tea.Msg)
-	// return a,  
-	// or better equivalent 
-}
+// func (a *App) Start() int {
+	// go a.Listen() 
+// }
 
+func (a *App) Start() error {
+	go a.Listen() // translate inputs to msgs 
+	
+	for msg := range a.Msgs {
+	//   if msg is navMsg, change focus += msg.Delta 
+	//   if msg is a command, interpret
+	//   if msg is a key press forward to a.Tabs[a.Focus]
+	}
+}
 
 func (a *App) View() string {
 	tabs := a.RenderTabs() 

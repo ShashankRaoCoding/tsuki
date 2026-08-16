@@ -1,7 +1,7 @@
 package msgs
 
-type StopMsg struct {
-	TabIndex int
+type NewTab struct {
+	AppName string 
 }
 
 
