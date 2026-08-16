@@ -25,9 +25,19 @@ func New() {
 }
 
 func (a *App) Start() error {
+	var err error 
 	go a.Listen() // translate inputs to msgs 
 	
 	for msg := range a.Msgs {
+		msgType := fmt.Sprintf("%t", msg)
+		f, ok := msg2func[msgType]
+		if ok == true {
+			err = f(a) 
+		} else {
+			err = fmt.Errorf("Invalid msg type %s", msgType) 
+		}
+
+		a.Msgs <- msgs.ErrMsg{Err: err} 
 	//   if msg is navMsg, change focus += msg.Delta 
 	//   if msg is a command, interpret
 	//   if msg is a key press forward to a.Tabs[a.Focus]
@@ -35,8 +45,8 @@ func (a *App) Start() error {
 }
 
 func (a *App) View() string {
-	tabs := a.RenderTabs() 
-	focus := a.Tabs[a.Focus].View() 
+	tabs := a.RenderTabs() // TO DO 
+	focus := a.Tabs[a.Focus].View() // TO DO 
 	return strings.Join([]string{tabs, focus}, "\n") 
 }
 
@@ -51,7 +61,7 @@ func (a *App) Listen() {
 	// }
 }
 
-func (a *App) 
+// func (a *App) 
 
 
 
