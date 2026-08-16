@@ -2,8 +2,8 @@ package app
 
 import (
 	// bubble tea related 
-	// tab
-	// msgs 
+	tab tsuki/tab/tab
+	msgs tsuki/app/msgs msgs 
 )
 
 type App struct {
