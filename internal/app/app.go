@@ -2,17 +2,17 @@ package app
 
 import (
 	// bubble tea related 
-	tab tsuki/tab/tab
-	msgs tsuki/app/msgs msgs 
+	tab tsuki/internal/tab
+	msgs tsuki/internal/msgs 
 )
 
 type App struct {
-	tabs []tab.Tab
-	focus int // the tab index that is focussed 
-	clis []map[string]string
+	Tabs map[string]tab.Tab
+	Focus string // the app name that is focussed 
+	Apps []map[string]string
 }
 
-func (a App) Init() {
+func (a App) Init() (tea.Model, tea.Cmd) {
 	// reads CLIs/* and adds the CLIs 
 	// starts tab 'launcher' 
 }
@@ -27,7 +27,7 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (a App) View() string {
 	tabs := a.RenderTabs() 
-	focus := a.tabs[a.focus].View() 
+	focus := a.Tabs[a.Focus].View() 
 	return strings.Join([]string{tabs, focus}, "\n") 
 }
 
