@@ -2,31 +2,33 @@ package app
 
 import (
 	// bubble tea related 
-	tab tsuki/tsuki/tab
-	msgs tsuki/tsuki/msgs 
+	tab tsuki/tab
+	msgs tsuki/msgs 
+	shared tsuki/shared 
 )
 
-// func New() Main {
-	// creates a Main App 
-	// m := Main{} 
-	// reads apps/* and constructs Main.Apps 
+// func New() App {
+	// creates a App App 
+	// m := App{} 
+	// reads apps/* and constructs App.Apps 
 	// return m 
 // }
 
-type Main struct {
-	Tabs map[int]tab.Tab
+type App struct {
+	Tabs []tab.Tab
 	Focus int // the tab index that is focussed 
-	Apps map[string]appConfig
+	Apps map[string]shared.AppConfig
+	Msgs chan msgs.Msg
 }
 
-type appConfig map[string]string
+// type appConfig map[string]string
 
-func (m *Main) Start() {
+func (a *App) Start() {
 	// reads CLIs/* and adds the CLIs 
 	// starts tab 'launcher' 
 }
 
-func (m *Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (a *App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// if reserved, interpret
 	// else forward to focus tab with
 	// a.Tabs[a.Focus] = a.Tabs[a.Focus].Update(tea.Msg)
@@ -35,7 +37,7 @@ func (m *Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 
-func (m *Main) View() string {
+func (a *App) View() string {
 	tabs := a.RenderTabs() 
 	focus := a.Tabs[a.Focus].View() 
 	return strings.Join([]string{tabs, focus}, "\n") 
