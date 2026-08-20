@@ -30,7 +30,7 @@ func (a *App) Start() error {
 	
 	for msg := range a.Msgs {
 		msgType := fmt.Sprintf("%t", msg)
-		f, ok := msg2func[msgType]
+		f, ok := MSG2FUNC[msgType]
 		if ok == true {
 			err = f(a) 
 		} else {
@@ -38,9 +38,6 @@ func (a *App) Start() error {
 		}
 
 		a.Msgs <- msgs.ErrMsg{Err: err} 
-	//   if msg is navMsg, change focus += msg.Delta 
-	//   if msg is a command, interpret
-	//   if msg is a key press forward to a.Tabs[a.Focus]
 	}
 }
 
