@@ -28,7 +28,12 @@ func (a App) View() string {
 	return a.Render() 
 }
 
-
+func (a App) Render() string {
+	return lipgloss.JoinVertical(
+		tabs,
+		content, 
+	)
+}
 
 
 
