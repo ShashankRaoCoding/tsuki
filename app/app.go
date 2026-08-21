@@ -15,6 +15,12 @@ func (a App) Update(m tea.Msg) (tea.Model, tea.Cmd) {
 	var o bool
 	var c tea.Cmd 
 
+	f, o = msgs.Msg2Func[m]
+	if o == false {
+		f, _ = msgs.Msg2Func["Err"] 
+	}
+
+	a, c = f(a, m) 
 	return a, c
 }
 
