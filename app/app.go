@@ -7,6 +7,13 @@ import (
 	shared "github.com/ShashankRaoCoding/tsuki/shared"
 )
 
+type App struct {
+	Height int 
+	Widht int 
+	Tabs []*tab.Tab
+	Apps map[string]shared.AppConfig
+}
+
 func (a App) Init() tea.Msg {
 	return nil 
 }
