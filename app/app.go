@@ -4,7 +4,7 @@ import (
 	msgs "github.com/ShashankRaoCoding/tsuki/msgs"
 	tea "github.com/charmbracelet/bubbletea"
 	lipgloss "github.com/charmbracelet/lipgloss"
-
+	shared "github.com/ShashankRaoCoding/tsuki/shared"
 )
 
 func (a App) Init() tea.Msg {
