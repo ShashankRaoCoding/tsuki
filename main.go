@@ -1,17 +1,15 @@
 package main
 
 import (
-	"tsuki/app"
+	"os"
+	"fmt" 
+	"github.com/ShashankRaoCoding/tuski/app" 
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-	a := app.New() 
-	err := a.Start() 
-	if err != nil {
-		panic(err) 
-	}
+	
 }
-
 
 
 
