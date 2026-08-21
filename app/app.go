@@ -3,6 +3,7 @@ package app
 import (
 	msgs "github.com/ShashankRaoCoding/tsuki/msgs"
 	tea "github.com/charmbracelet/bubbletea"
+	lipgloss "github.com/charmbracelet/lipgloss"
 
 )
 
@@ -29,6 +30,8 @@ func (a App) View() string {
 }
 
 func (a App) Render() string {
+	tab := app.RenderTabs()
+	content := app.Tabs[app.Focus.View()] 
 	return lipgloss.JoinVertical(
 		tabs,
 		content, 
