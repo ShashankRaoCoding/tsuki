@@ -3,7 +3,7 @@ package msgs
 import (
 	"fmt"
 	msgFuncs "github.com/ShashankRaoCoding/tsuki/msgs/msgFuncs"
-	tea "github.com/charmbracelet/tea"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type MsgFunc func(tea.Model, tea.Msg) (tea.Model, tea.Cmd) 
