@@ -1,4 +1,4 @@
-package MsgFuncs 
+package msgFuncs
 
 import (
 	"fmt"
