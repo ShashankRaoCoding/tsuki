@@ -1,6 +1,6 @@
 package config
 
-var Config = "config.json"
+var ConfigPath = "config.json"
 
 func init() {
 	
