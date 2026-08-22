@@ -42,6 +42,9 @@ func LoadApps() ([]AppConfig, error) {
 		} 
 
 		err = json.Unmarshal(data, &appConfig) 
+		if err != nil {
+			errs = append(errs, err) 
+		}
 	}
 }
 
