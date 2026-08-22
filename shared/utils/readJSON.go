@@ -18,7 +18,7 @@ func ReadJSONToStruct(filePath, structType) (any, err ) {
 		return s, err 
 	}
 
-	fileData, err = io.ReadAll(fole) 
+	fileData, err = io.ReadAll(file) 
 	if err != nil {
 		return s, err 
 	}
