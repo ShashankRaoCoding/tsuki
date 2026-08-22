@@ -24,7 +24,6 @@ func ReadJSONToStruct(filePath, structType) (any, err ) {
 	}
 
 	err = json.Unmarshal()
-	return s, err 
 }
 
 
