@@ -16,7 +16,7 @@ func ReadDirToStructs(filePath string, s any) ([]any, err) {
 
 	files, err = os.ReadDir(filePath) 
 	if err != nil {
-		return 
+		return S, err 
 	}
 	for _, file := files 
 }
