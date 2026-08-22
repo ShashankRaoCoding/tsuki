@@ -6,6 +6,7 @@ import (
 	"io"
 	"encoding/json" 
 	"io/fs" 
+	"path/filepath" 
 )
 
 func ReadDirToStructs(filePath string, s any) ([]any, err) {
