@@ -2,6 +2,10 @@ package config
 
 var Config = "config.json"
 
+func init() {
+	
+}
+
 
 
 
