@@ -41,7 +41,7 @@ func LoadApps() ([]AppConfig, error) {
 			errs = append(errs, err) 
 		} 
 
-		
+		err = json.Unmarshal(data, &appConfig) 
 	}
 }
 
