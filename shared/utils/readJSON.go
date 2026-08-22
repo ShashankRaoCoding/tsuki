@@ -21,7 +21,7 @@ func ReadDirToStructs(filePath string, s any) ([]any, err) {
 	}
 
 	for _, file := files {
-
+		fullPath = filepath.Join(filePath, file.Name()) 
 	}
 }
 
