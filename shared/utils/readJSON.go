@@ -43,16 +43,16 @@ func ReadJSONToStruct(filePath string, s any) error {
 
 	file, err = os.Open(filePath) 
 	if err != nil {
-		return s, err
+		return err
 	}
 
 	fileData, err = io.ReadAll(file) 
 	if err != nil {
-		return s, err
+		return err
 	}
 
 	err = json.Unmarshal(fileData, s)
-	return s, err
+	return err
 }
 
 
