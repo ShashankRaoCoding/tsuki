@@ -14,6 +14,7 @@ func LoadApps() ([]AppConfig, error) {
 	var files []fs.DirEntry
 	var err error
 	var apps []AppConfig 
+	var errs []error 
 
 	files, err = os.ReadDir(AppsDir) // from config.go 
 	if err != nil {
