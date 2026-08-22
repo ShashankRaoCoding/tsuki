@@ -23,9 +23,7 @@ func LoadApps(appsDir string) ([]AppConfig, error) {
 	}
 
 	for _, fileEntry := range files {
-		var data []byte
-		var file os.File
-		var appConfig AppConfig 
+	var appConfig AppConfig 
 		var filePath = filepath.Join(
 			AppsDir, 
 			fileEntry.Name(), 
