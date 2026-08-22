@@ -27,7 +27,10 @@ func LoadApps() ([]AppConfig, error) {
 		if err == nil {
 			
 		} else {
-			
+			errs = append(
+				errs,
+				fmt.Errorf("Could not read %s", file) , 
+			)
 		}
 	}
 }
