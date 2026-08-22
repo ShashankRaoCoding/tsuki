@@ -12,7 +12,7 @@ func ReadDirToStructs(filePath string, s any) ([]any, err) {
 	var files []fs.DirEntry
 	var err error 
 	var errs []error 
-	var all_s []any 
+	var allS []any 
 
 	files, err = os.ReadDir(filePath) 
 	if err != nil {
