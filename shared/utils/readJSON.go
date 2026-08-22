@@ -9,7 +9,7 @@ import (
 	"path/filepath" 
 )
 
-func ReadDirToStructs(filePath string, s any) ([]any, err) {
+func ReadDirToStructs(filePath string, f func() any) error {
 	var files []fs.DirEntry
 	var err error 
 	var errs []error 
