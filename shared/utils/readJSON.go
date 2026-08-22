@@ -10,10 +10,11 @@ import (
 func ReadJSONToStruct(filePath, structType) (any, err ) {
 	var file os.File
 	var err error 
+	var s = make(structType) 
 
 	file, err = os.Open(filePath) 
 	if err != nil {
-		
+		return 
 	}
 }
 
