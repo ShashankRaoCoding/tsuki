@@ -11,7 +11,7 @@ func ReadDirToStructs(filePath string, s any) (any, err) {
 	
 }
 
-func ReadJSONToStruct(filePath string, s any) err {
+func ReadJSONToStruct(filePath string, s any) (any, err) {
 	var file os.File
 	var fileData []byte 
 	var err error 
