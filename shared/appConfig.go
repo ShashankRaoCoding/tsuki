@@ -21,8 +21,9 @@ func LoadApps() ([]AppConfig, error) {
 		return apps, fmt.Errorf("There was an error: Could not Read %s", AppsDir)
 	}
 
-	for _, file := range files {
+	for _, fileEntry := range files {
 		var data []byte
+
 		data, err = io.ReadAll(file) 
 		if err == nil {
 			
