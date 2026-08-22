@@ -9,6 +9,7 @@ import (
 
 func ReadJSONToStruct(filePath, structType) (any, err ) {
 	var file os.File
+	var fileData []byte 
 	var err error 
 	var s = make(structType) 
 
@@ -16,6 +17,8 @@ func ReadJSONToStruct(filePath, structType) (any, err ) {
 	if err != nil {
 		return s, err 
 	}
+
+	err = json.Unmarshal()
 }
 
 
