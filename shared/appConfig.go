@@ -11,7 +11,7 @@ import (
 
 type AppConfig map[string]string
 
-func LoadApps() ([]AppConfig, error) {
+func LoadApps(appsDir string) ([]AppConfig, error) {
 	var files []fs.DirEntry
 	var err error
 	var apps []AppConfig 
