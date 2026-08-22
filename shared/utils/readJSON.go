@@ -7,7 +7,9 @@ import (
 	"encoding/json" 
 )
 
-
+func ReadJSONToStruct(filePath, structType) any {
+	
+}
 
 
 
