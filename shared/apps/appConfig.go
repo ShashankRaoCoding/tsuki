@@ -9,7 +9,7 @@ import (
 type AppConfig map[string]string 
 
 func LoadApps(filePath string) ([]AppConfig, error) {
-	var appConfig  = AppConfig 
+	var appConfig  = AppConfig {} 
 
 }
 
