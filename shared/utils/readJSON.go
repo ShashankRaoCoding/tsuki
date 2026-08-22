@@ -18,7 +18,9 @@ func ReadDirToStructs(filePath string, s any) ([]any, err) {
 	if err != nil {
 		return S, err 
 	}
-	for _, file := files 
+	for _, file := files {
+		
+	}
 }
 
 func ReadJSONToStruct(filePath string, s any) (any, err) {
