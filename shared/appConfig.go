@@ -23,7 +23,9 @@ func LoadApps() ([]AppConfig, error) {
 
 	for _, fileEntry := range files {
 		var data []byte
+		var file os.File
 
+		file, err = os.Open(fileEntry.Name()) 
 		data, err = io.ReadAll(file) 
 		if err == nil {
 			
