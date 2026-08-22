@@ -6,7 +6,7 @@ import (
 	"os" 
 	"io" 
 	"io/fs" 
-	"path/filepath"
+	"path/filepath" 
 )
 
 type AppConfig map[string]string
@@ -26,7 +26,9 @@ func LoadApps() ([]AppConfig, error) {
 		var data []byte
 		var file os.File
 
-		file, err = os.Open(fileEntry.Name()) 
+		file, err = os.Open(filepath.Join(
+			fileEntry.Name()
+		) 
 		data, err = io.ReadAll(file) 
 		if err == nil {
 			
