@@ -1,5 +1,7 @@
 package appConfig 
 
+type AppConfig map[string]string 
+
 
 
 
