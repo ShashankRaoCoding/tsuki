@@ -22,7 +22,7 @@ func ReadJSONToStruct(filepath string, s any) err {
 		return s, err
 	}
 
-	err = json.Unmarshal(fileDtaa, &s)
+	err = json.Unmarshal(fileData, &s)
 	return s, err
 }
 
