@@ -31,6 +31,7 @@ func LoadApps(appsDir string) ([]AppConfig, error) {
 		if err != nil {
 			errs = append(errs, err) 
 		}
+
 		apps = append(apps, appConfig) 
 	}
 }
