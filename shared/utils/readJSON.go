@@ -18,6 +18,7 @@ func ReadJSONToStruct(filePath, structType) (any, err ) {
 		return s, err 
 	}
 
+	fileData, err = io.ReadAll(fole) 
 	err = json.Unmarshal()
 }
 
