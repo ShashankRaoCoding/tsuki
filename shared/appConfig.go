@@ -28,7 +28,7 @@ func LoadApps() ([]AppConfig, error) {
 		var filepath = filepath.Join(
 			AppsDir, 
 			fileEntry.Name(),
-			) 
+		) 
 
 		file, err = os.Open(
 			filepath  
