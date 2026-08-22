@@ -27,6 +27,7 @@ func LoadApps(appsDir string) ([]AppConfig, error) {
 			fileEntry.Name(), 
 		) 
 
+		appConfig, err = utils.ReadJSONToStruct(filePath, appConfig) 
 		apps = append(apps, appConfig) 
 	}
 }
