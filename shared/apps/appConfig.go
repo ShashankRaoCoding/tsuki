@@ -31,24 +31,6 @@ func LoadApps(appsDir string) ([]AppConfig, error) {
 			fileEntry.Name(), 
 		) 
 
-		file, err = os.Open(filePath) 
-		if err != nil {
-			errs = append(errs, err) 
-			continue 
-		}
-
-		data, err = io.ReadAll(file) 
-		if err == nil {
-			errs = append(errs, err) 
-			continue 
-		} 
-
-		err = json.Unmarshal(data, &appConfig) 
-		if err != nil {
-			errs = append(errs, err) 
-			continue 
-		}
-
 		apps = append(apps, appConfig) 
 	}
 }
