@@ -13,9 +13,12 @@ func LoadApps(filePath string) ([]AppConfig, error) {
 	var appConfigs []AppConfig 
 	var err error 
 
-	appConfigs, err = utils.ReadDirToStructs(filePath, func() AppConfig{
-		return AppConfig{} 
-	}) 
+	appConfigs, err = utils.ReadDirToStructs(
+		filePath,
+		func() AppConfig{
+			return AppConfig{} 
+		}, 
+	) 
 
 }
 
