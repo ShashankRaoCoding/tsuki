@@ -14,8 +14,12 @@ func main() {
 		tea.WithAltScreen, 
 	)
 
+	if err == nil {
+		os.Exit(0) 
+	}
+
 	fmt.Printf(err)
-	os.Exit(0) 
+	os.Exit(1) 
 }
 
 
