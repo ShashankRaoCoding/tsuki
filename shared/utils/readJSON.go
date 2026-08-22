@@ -7,11 +7,10 @@ import (
 	"encoding/json" 
 )
 
-func ReadJSONToStruct(filepath string, s *any) err {
+func ReadJSONToStruct(filepath string, s any) err {
 	var file os.File
 	var fileData []byte 
 	var err error 
-	var s = make(structType) 
 
 	file, err = os.Open(filePath) 
 	if err != nil {
