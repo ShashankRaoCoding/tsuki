@@ -8,7 +8,7 @@ import (
 )
 
 func ReadJSONToStruct(filePath, structType) any {
-	
+	file, err = os.Open(filePath) 
 }
 
 
