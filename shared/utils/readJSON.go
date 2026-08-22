@@ -23,6 +23,9 @@ func ReadDirToStructs(filePath string, s any) ([]any, err) {
 	for _, file := files {
 		fullPath = filepath.Join(filePath, file.Name()) 
 		s, err = ReadJSONToStruct(fullPath, s) 
+		if err != nil {
+			errs = append(errs, err) 
+		}
 		allS = append(allS, s) 
 	}
 }
