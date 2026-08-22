@@ -34,6 +34,7 @@ func LoadApps() ([]AppConfig, error) {
 		if err != nil {
 			errs = append(errs, err) 
 		}
+
 		data, err = io.ReadAll(file) 
 		if err == nil {
 			errs = append(errs, err) 
