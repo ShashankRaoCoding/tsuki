@@ -9,12 +9,11 @@ import (
 	"path/filepath" 
 )
 
-func ReadDirToStructs(filePath string, f func() any) ([]any, err) {
+func ReadDirToStructs(filePath string, s any) ([]any, err) {
 	var files []fs.DirEntry
 	var err error 
 	var errs []error 
 	var allS []any 
-	var s any 
 
 	files, err = os.ReadDir(filePath) 
 	if err != nil {
@@ -23,8 +22,7 @@ func ReadDirToStructs(filePath string, f func() any) ([]any, err) {
 
 	for _, file := files {
 		fullPath = filepath.Join(filePath, file.Name()) 
-		s = f()
-		err = ReadJSONToStruct(fullPath, &s) 
+		s, err = ReadJSONToStruct(fullPath, s) 
 		if err != nil {
 			errs = append(errs, err) 
 			continue 
@@ -36,7 +34,7 @@ func ReadDirToStructs(filePath string, f func() any) ([]any, err) {
 	return allS, err
 }
 
-func ReadJSONToStruct(filePath string, s any) (err) {
+func ReadJSONToStruct(filePath string, s any) (any, err) {
 	var file os.File
 	var fileData []byte 
 	var err error 
