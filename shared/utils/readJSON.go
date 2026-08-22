@@ -14,7 +14,7 @@ func ReadJSONToStruct(filePath, structType) (any, err ) {
 
 	file, err = os.Open(filePath) 
 	if err != nil {
-		return 
+		return s, err 
 	}
 }
 
