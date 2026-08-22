@@ -17,7 +17,7 @@ func LoadApps() ([]AppConfig, error) {
 	var apps []AppConfig 
 	var errs []error 
 
-	files, err = os.ReadDir(AppsDir) // from config.go 
+	files, err = os.ReadDir(appsDir) // from config.go 
 	if err != nil {
 		return apps, fmt.Errorf("There was an error: Could not Read %s", AppsDir)
 	}
