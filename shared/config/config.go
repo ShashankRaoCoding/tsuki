@@ -1,4 +1,4 @@
-package shared
+package config
 
 var AppsDir = "apps/"
 
