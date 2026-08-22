@@ -5,7 +5,7 @@ import (
 )
 
 type Config struct {
-	AppsDir any 
+	AppsDir string 
 	
 }
 
