@@ -7,6 +7,10 @@ import (
 	"encoding/json" 
 )
 
+func ReadDirToStructs(filePath string, s any) (any, err) {
+	
+}
+
 func ReadJSONToStruct(filePath string, s any) err {
 	var file os.File
 	var fileData []byte 
