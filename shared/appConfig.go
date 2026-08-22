@@ -25,6 +25,7 @@ func LoadApps() ([]AppConfig, error) {
 	for _, fileEntry := range files {
 		var data []byte
 		var file os.File
+		var appConfig AppConfig 
 		var filePath = filepath.Join(
 			AppsDir, 
 			fileEntry.Name(), 
@@ -39,6 +40,8 @@ func LoadApps() ([]AppConfig, error) {
 		if err == nil {
 			errs = append(errs, err) 
 		} 
+
+		
 	}
 }
 
