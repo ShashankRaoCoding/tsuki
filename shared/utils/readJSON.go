@@ -29,7 +29,8 @@ func ReadDirToStructs(filePath string, s any) ([]any, err) {
 		allS = append(allS, s) 
 	}
 
-	return allS, s 
+	err = ErrsToErr(errs) 
+	return allS, err
 }
 
 func ReadJSONToStruct(filePath string, s any) (any, err) {
