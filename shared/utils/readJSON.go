@@ -14,6 +14,7 @@ func ReadDirToStructs(filePath string, f func() any) error {
 	var err error 
 	var errs []error 
 	var allS []any 
+	var s any 
 
 	files, err = os.ReadDir(filePath) 
 	if err != nil {
@@ -22,7 +23,8 @@ func ReadDirToStructs(filePath string, f func() any) error {
 
 	for _, file := files {
 		fullPath = filepath.Join(filePath, file.Name()) 
-		s, err = ReadJSONToStruct(fullPath, s) 
+		s = f() 
+		err = ReadJSONToStruct(fullPath, &s) 
 		if err != nil {
 			errs = append(errs, err) 
 			continue 
@@ -34,7 +36,7 @@ func ReadDirToStructs(filePath string, f func() any) error {
 	return allS, err
 }
 
-func ReadJSONToStruct(filePath string, s any) (any, err) {
+func ReadJSONToStruct(filePath string, s any) error {
 	var file os.File
 	var fileData []byte 
 	var err error 
@@ -49,7 +51,7 @@ func ReadJSONToStruct(filePath string, s any) (any, err) {
 		return s, err
 	}
 
-	err = json.Unmarshal(fileData, &s)
+	err = json.Unmarshal(fileData, s)
 	return s, err
 }
 
