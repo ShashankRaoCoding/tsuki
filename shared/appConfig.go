@@ -25,10 +25,13 @@ func LoadApps() ([]AppConfig, error) {
 	for _, fileEntry := range files {
 		var data []byte
 		var file os.File
-
-		file, err = os.Open(filepath.Join(
+		var filepath = filepath.Join(
 			AppsDir, 
-			fileEntry.Name(), 
+			fileEntry.Name(),
+			) 
+
+		file, err = os.Open(
+			filepath  
 		) 
 		data, err = io.ReadAll(file) 
 		if err == nil {
