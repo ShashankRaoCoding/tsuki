@@ -27,7 +27,8 @@ func LoadApps() ([]AppConfig, error) {
 		var file os.File
 
 		file, err = os.Open(filepath.Join(
-			fileEntry.Name()
+			AppsDir, 
+			fileEntry.Name(), 
 		) 
 		data, err = io.ReadAll(file) 
 		if err == nil {
