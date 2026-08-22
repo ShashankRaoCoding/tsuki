@@ -12,15 +12,13 @@ func ReadDirToStructs(filePath string, s any) ([]any, err) {
 	var files []fs.DirEntry
 	var err error 
 	var errs []error 
-	var S []any 
+	var all_s []any 
 
 	files, err = os.ReadDir(filePath) 
 	if err != nil {
-		return S, err 
+		return 
 	}
-	for _, file := files {
-		
-	}
+	for _, file := files 
 }
 
 func ReadJSONToStruct(filePath string, s any) (any, err) {
