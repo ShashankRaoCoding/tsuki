@@ -7,7 +7,7 @@ import (
 	"encoding/json" 
 )
 
-func ReadJSONToStruct(filePath, structType) (any, err ) {
+func ReadJSONToStruct(filePath, s *any) (any, err ) {
 	var file os.File
 	var fileData []byte 
 	var err error 
