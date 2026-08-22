@@ -48,6 +48,8 @@ func LoadApps() ([]AppConfig, error) {
 			errs = append(errs, err) 
 			continue 
 		}
+
+		apps = append(apps, appConfig) 
 	}
 }
 
