@@ -31,6 +31,9 @@ func LoadApps() ([]AppConfig, error) {
 		) 
 
 		file, err = os.Open(filePath) 
+		if err != nil {
+			
+		}
 		data, err = io.ReadAll(file) 
 		if err == nil {
 			
