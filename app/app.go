@@ -4,6 +4,7 @@ import (
 	msgs "github.com/ShashankRaoCoding/tsuki/msgs"
 	tea "github.com/charmbracelet/bubbletea"
 	lipgloss "github.com/charmbracelet/lipgloss"
+	config "github.com/ShashankRaoCoding/tsuki/shared/config" 
 	appsConfig "github.com/ShashankRaoCoding/tsuki/shared/appsConfig"
 )
 
