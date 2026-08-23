@@ -16,7 +16,7 @@ func ErrsToErr(errs []error) error {
 	if len(_errs) == 0 {
 		return nil 
 	} else {
-		
+		return strings.Join(_errs, "\n")
 	}
 }
 
