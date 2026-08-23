@@ -14,6 +14,10 @@ func main() {
 		tea.WithAltScreen, 
 	)
 
+	app.New().Init() 
+	app.New().Update()
+	app.New.View()
+	
 	if err == nil {
 		os.Exit(0) 
 	}

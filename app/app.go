@@ -16,7 +16,7 @@ type App struct {
 }
 
 func (a App) Init() tea.Msg {
-	apps, err = shared.LoadApps() 
+	apps, err = appsConfig.LoadApps() 
 
 	return nil 
 }

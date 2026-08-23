@@ -1,4 +1,4 @@
-package appConfig 
+package appsConfig
 
 import (
 	"fmt"
