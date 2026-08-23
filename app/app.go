@@ -8,6 +8,10 @@ import (
 	appsConfig "github.com/ShashankRaoCoding/tsuki/shared/appsConfig"
 )
 
+func New() App {
+	return App{} 
+}
+
 type App struct {
 	Height int 
 	Widht int 
