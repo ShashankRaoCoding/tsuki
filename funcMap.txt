@@ -1,10 +1,33 @@
 main {
 	app.New() {
-		
+		utils.ReadJSONToFunc {
+			
+		}
 	}
-	app.Init()
-	app.Update()
-	app.View() 
+	app.Init() {
+		appsConfig.LoadApps() {
+			utils.ReadDirToStructs() {
+				utils.ReadJSONToStructs {
+					
+				}
+			}
+		}
+	}
+	app.Update() {
+		f() {
+			msgs.ErrFunc 
+		}
+	}
+	app.View() {
+		a.Render() {
+			a.RenderTabs() {
+				
+			}
+			tab.Tab.View() {
+				
+			}
+		}
+	}
 
 }
 
