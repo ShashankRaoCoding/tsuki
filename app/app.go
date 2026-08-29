@@ -23,6 +23,7 @@ type App struct {
 	Width int 
 	Tabs []*tab.Tab
 	Apps map[string]appsConfig.AppConfig
+	Focus int 
 }
 
 func (a App) Init() tea.Cmd {
@@ -53,12 +54,9 @@ func (a App) View() string {
 }
 
 func (a App) Render() string {
-	tab := app.RenderTabs()
-	content := app.Tabs[app.Focus.View()] 
-	return lipgloss.JoinVertical(
-		tabs,
-		content, 
-	)
+	tabLabels := app.RenderTabLabels()
+	content := app.Tabs[app.Focus] .View()
+	return tabLabels + "\n" + content 
 }
 
 
