@@ -9,7 +9,7 @@ func renderTabLabels(a App) []string {
 	labels  := []string{} 
 	labelWidth := (a.Width - 2 - len(logo)  - (len(" | ") * len(a.Tabs))) / len(a.Tabs)
 	for _, tab := range a.Tabs {
-		label := tab.Label.View(labelWidth) 
+		label := tab.Label.View() 
 		labels = append(labels, label) 
 	}
 
