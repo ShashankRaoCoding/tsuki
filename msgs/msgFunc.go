@@ -8,9 +8,7 @@ import (
 
 type MsgFunc func(tea.Model, tea.Msg) (tea.Model, tea.Cmd) 
 
-var Msg2Func = map[string]MsgFunc{
-	"Err": msgFuncs.ErrFunc, 
-}
+var Msg2Func = map[string]MsgFunc{}
 
 
 

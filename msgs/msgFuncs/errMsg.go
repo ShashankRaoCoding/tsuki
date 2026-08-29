@@ -3,12 +3,16 @@ package msgFuncs
 import (
 	"fmt"
 	tea "github.com/charmbracelet/bubbletea" 
+	msgs "github.com/ShashankRaoCoding/tsuki/msgs"
+	"log" 
 )
 
+func init() {
+	msgs.Msg2Func["msgFuncs.ErrMsg"] = ErrFunc
+}
+
 func ErrFunc(a tea.Model, m tea.Msg) (tea.Model, tea.Cmd) {
-	var c = func() tea.Msg {
-		return fmt.Errorf("Err: %s", m) 
-	}
+	log.Printf("Error: %s", m) 
 	return a, c 
 }
 

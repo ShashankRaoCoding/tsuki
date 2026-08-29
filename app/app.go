@@ -17,11 +17,14 @@ type App struct {
 	Height int 
 	Widht int 
 	Tabs []*tab.Tab
-	Apps map[string]shared.AppConfig
+	Apps map[string]appsConfig.AppConfig
 }
 
-func (a App) Init() tea.Msg {
-	apps, err = appsConfig.LoadApps() 
+func (a App) Init() tea.Cmd {
+	_apps, err = appsConfig.LoadApps(".apps/") 
+	for _, app := range _apps {
+		a.Apps[app.Name] = app
+	}
 
 	return nil 
 }
@@ -33,7 +36,7 @@ func (a App) Update(m tea.Msg) (tea.Model, tea.Cmd) {
 
 	f, o = msgs.Msg2Func[m]
 	if o == false {
-		f, _ = msgs.Msg2Func["Err"] 
+		f, _ = msgs.Msg2Func["msgs.ErrMsg"] 
 	}
 
 	a, c = f(a, m) 

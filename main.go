@@ -1,31 +1,28 @@
 package main
 
 import (
+	"log" 
 	"fmt"
 	"os"
 	"github.com/ShashankRaoCoding/tsuki/app"
 	tea "github.com/charmbracelet/bubbletea"
+	_ "github.com/ShashankRaoCoding/tsuki/msgs/msgFuncs"
 )
 
 func main() {
-	var err error
-	_, err = tea.NewProgram(
-		app.New(),
-		tea.WithAltScreen, 
-	)
-
-	/* 
-	app.New().Init() 
-	app.New().Update()
-	app.New().View()
-	*/ 
-	
+	f, err := os.Create(".tuski/errors") 
 	if err == nil {
-		os.Exit(0) 
+			log.SetOutput(f) 
 	}
+	defer f.Close() 
 
-	fmt.Printf(err)
-	os.Exit(1) 
+	_, err := tea.NewProgram(
+		app.New(),
+		tea.WithAltScreen(), 
+	).Run() 
+
+	log.Println(err.Error()) 
+	os.Exit(0) 
 }
 
 
