@@ -6,7 +6,7 @@ import (
 	"os"
 	"github.com/ShashankRaoCoding/tsuki/app"
 	tea "github.com/charmbracelet/bubbletea"
-	_ "github.com/ShashankRaoCoding/tsuki/msgs/msgFuncs"
+	// _ "github.com/ShashankRaoCoding/tsuki/msgs/msgFuncs"
 )
 
 func main() {

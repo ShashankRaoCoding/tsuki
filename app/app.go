@@ -7,6 +7,7 @@ import (
 	config "github.com/ShashankRaoCoding/tsuki/shared/config" 
 	appsConfig "github.com/ShashankRaoCoding/tsuki/shared/appsConfig"
 	tabs "github.com/ShashankRaoCoding/tsuki/tabs" 
+	msgFuncs "github.com/ShashankRaoCoding/tsuki/msgs/msgFuncs" 
 )
 
 func New() App {
@@ -19,7 +20,7 @@ func New() App {
 
 type App struct {
 	Height int 
-	Widht int 
+	Width int 
 	Tabs []*tab.Tab
 	Apps map[string]appsConfig.AppConfig
 }
@@ -40,7 +41,7 @@ func (a App) Update(m tea.Msg) (tea.Model, tea.Cmd) {
 
 	f, o = msgs.Msg2Func[m]
 	if o == false {
-		f, _ = msgs.Msg2Func["msgs.ErrMsg"] 
+		f, _ = msgs.Msg2Func["msgFuncs.ErrMsg"] 
 	}
 
 	a, c = f(a, m) 
