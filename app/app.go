@@ -54,7 +54,7 @@ func (a App) View() string {
 }
 
 func (a App) Render() string {
-	tabLabels := app.RenderTabLabels()
+	tabLabels := renderLabels(a)
 	content := app.Tabs[app.Focus] .View()
 	return tabLabels + "\n" + content 
 }
