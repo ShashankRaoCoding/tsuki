@@ -10,7 +10,11 @@ import (
 )
 
 func New() App {
-	return App{} 
+	return App{
+		Tabs: []*tabs.Tab{
+			tabs.New(), 
+		}, 
+	} 
 }
 
 type App struct {
