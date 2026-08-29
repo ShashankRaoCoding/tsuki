@@ -6,6 +6,7 @@ import (
 	lipgloss "github.com/charmbracelet/lipgloss"
 	config "github.com/ShashankRaoCoding/tsuki/shared/config" 
 	appsConfig "github.com/ShashankRaoCoding/tsuki/shared/appsConfig"
+	tabs "github.com/ShashankRaoCoding/tsuki/tabs" 
 )
 
 func New() App {
