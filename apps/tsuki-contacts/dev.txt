@@ -9,7 +9,7 @@ CLI app that
 The app works on a view edit model
 
 Views
-This is a page. When a contact isn't selected, this can be simply:
+This is a page. If a contact isn't selected, this can be simply:
 ___________________________________________________________________________________
 | Name | Most Recent Contact | Emails Pending Response | Emails Awaiting Response |
 |---------------------------------------------------------------------------------|
