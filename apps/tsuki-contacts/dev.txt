@@ -20,6 +20,7 @@ ________________________________________________________________________________
 
 If a contact is selected:
 
+_______________________________
 Name:
 Shashank Rao
 
@@ -36,9 +37,10 @@ About:
 Likes coding
 
 Most recet contact:
-[[Email to Shashank Rao]] 
+[[Email to Shashank Rao]]
+______________________________
 
-
+Click and type to edit
 
 
 
