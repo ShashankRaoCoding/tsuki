@@ -20,10 +20,10 @@ func ReadDirToStructs(filePath string, allS *[]any, f func() any) error {
 		return err 
 	}
 
-	for _, file := files {
-		fullPath = filepath.Join(filePath, file.Name()) 
+	for _, file := range files {
+		fullPath := filepath.Join(filePath, file.Name()) 
 		s = f() 
-		err = ReadJSONToStruct(fullPath, &s) 
+		err = ReadJSONToStruct(fullPath, s) 
 		if err != nil {
 			errs = append(errs, err) 
 			continue 
