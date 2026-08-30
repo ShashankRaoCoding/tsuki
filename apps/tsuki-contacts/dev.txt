@@ -23,11 +23,15 @@ If a contact is selected:
 Name:
 Shashank Rao
 
+Email:
+real.email@fakeEmail.com 
+
 Age:
 21
 
 About:
 Likes coding
+
 
 
 
