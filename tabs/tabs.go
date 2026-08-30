@@ -17,7 +17,11 @@ func (c Console) View() string {
 	return "text" 
 }
 
-
+func New() Tab {
+	return Tab{
+		Label: labels.New("New Tab"), 
+	}
+}
 
 
 
