@@ -10,10 +10,16 @@ func (l Label) Render(w width) string {
 		label = "Untitled" 
 	}
 
-	if len(label) <= len(elipses) || len(label) <= w {
+	if len(label) <= len(elipses) {
 		return label 
 	}
 
+	if len(label) <= w {
+		return label 
+	}
+
+	label = label[0:w - len(elipses)] + elipses
+	return label 
 }
 
 
