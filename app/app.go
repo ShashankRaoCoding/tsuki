@@ -45,7 +45,8 @@ func (a App) Update(m tea.Msg) (tea.Model, tea.Cmd) {
 		f, _ = msgs.Msg2Func["msgFuncs.ErrMsg"] 
 	}
 
-	a, c = f(a, m) 
+	_a, c = f(a, m) 
+	a, _ = _a.(App) 
 	return a, c
 }
 
