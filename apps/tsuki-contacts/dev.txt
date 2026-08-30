@@ -2,8 +2,7 @@
 
 CLI app that
 1. Reads .tsuki/data
-2. Contructs contacts and connections
-3. UI to change these contacts and connections 
+2. UI to change these contacts and connections 
 
 
 
