@@ -6,7 +6,14 @@ CLI app that
 3. UI to change these contacts and connections 
 
 # How it works
+The app works on a view edit model
 
+Views
+This is a page. When a contact isn't selected, this can be simply:
+
+Name | Most Recent Contact | Emails Pending Response | Emails Awaiting Response |
+---------------------------------------------------------------------------------
+A    | Yesterday           | 2                       | 0                        |
 
 
 
