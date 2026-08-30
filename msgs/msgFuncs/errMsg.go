@@ -13,7 +13,7 @@ func init() {
 
 func ErrFunc(a tea.Model, m tea.Msg) (tea.Model, tea.Cmd) {
 	log.Printf("Error: %s", m) 
-	return a, c 
+	return a, nil 
 }
 
 
