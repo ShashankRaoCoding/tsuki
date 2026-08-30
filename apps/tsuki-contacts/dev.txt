@@ -10,10 +10,9 @@ The app works on a view edit model
 
 Views
 This is a page. When a contact isn't selected, this can be simply:
-_________________________________________________________________________________
-Name | Most Recent Contact | Emails Pending Response | Emails Awaiting Response |
----------------------------------------------------------------------------------
-A    | Yesterday           | 2                       | 0                        |
+___________________________________________________________________________________
+| Name | Most Recent Contact | Emails Pending Response | Emails Awaiting Response |
+| A    | Yesterday           | 2                       | 0                        |
 
 
 
