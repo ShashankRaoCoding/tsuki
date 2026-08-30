@@ -5,6 +5,7 @@ CLI app that
 2. Contructs contacts and connections
 3. UI to change these contacts and connections 
 
+# How it works
 
 
 
