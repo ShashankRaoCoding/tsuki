@@ -50,14 +50,20 @@ func (a App) Update(m tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (a App) View() string {
-	return a.Render() 
+	tabsLabels := lipgloss.JoinHorizontal(
+		lipgloss.Left,
+		renderTabsLabels(a) ..., 
+	)
+	return lipgloss.JoinVertical(
+		lipgloss.Top,
+		[]string{
+			tabsLabels,
+			a.Tabs[a.Focus].View(), 
+		}
+	)
 }
 
-func (a App) Render() string {
-	tabLabels := renderLabels(a)
-	content := app.Tabs[app.Focus] .View()
-	return tabLabels + "\n" + content 
-}
+
 
 
 
