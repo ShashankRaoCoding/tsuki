@@ -22,7 +22,10 @@ func (l Label) Render(w width) string {
 	return label 
 }
 
-
+func New(label string) Label {
+	l, _ := label.(string) 
+	return l 
+}
 
 
 
