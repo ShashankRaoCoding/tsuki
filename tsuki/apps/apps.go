@@ -19,7 +19,7 @@ func LoadApps(filePath string) ([]AppConfig, error) {
 	appConfigs := []AppConfig {} 
 	var err error 
 
-	appConfigs, err = utils.ReadDirToStructs(
+	_appConfigs, err = utils.ReadDirToStructs(
 		filePath,
 		func() AppConfig{
 			return AppConfig{} 
