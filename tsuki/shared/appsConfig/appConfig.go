@@ -6,6 +6,8 @@ import (
 	utils "github.com/ShashankRaoCoding/tsuki/shared/utils"
 )
 
+var Apps map[string]AppConfig 
+
 type AppConfig map[string]string 
 
 func LoadApps(filePath string) ([]AppConfig, error) {
