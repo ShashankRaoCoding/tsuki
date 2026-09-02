@@ -1,16 +1,26 @@
+
+# Combined 
+
+| Name | To  | From | Person | Event | Email | Creation Time | Most Recent Activity Time | Link | Place | Amount | Account | CC  | BCC | Data Type |
+| ---- | --- | ---- | ------ | ----- | ----- | ------------- | ------------------------- | ---- | ----- | ------ | ------- | --- | --- | --------- |
+|      |     |      |        |       |       |               |                           |      |       |        |         |     |     | Email     |
+|      |     |      |        |       |       |               |                           |      |       |        |         |     |     | Event     |
+
+Or each 
+
 # Emails 
 
-| To    | From     | Time                | CC  | BCC | Subject |
-| ----- | -------- | ------------------- | --- | --- | ------- |
-| Maya  | Shashank | XX/XX/XXXX/XX:XX:XX |     |     | Tsuki   |
-| Xheni | Shashank |                     |     |     | Tsuki   |
+| To    | From     | Time                | CC  | BCC | Subject | Data type   | Notes |
+| ----- | -------- | ------------------- | --- | --- | ------- | ----------- | ----- |
+| Maya  | Shashank | XX/XX/XXXX/XX:XX:XX |     |     | Tsuki   | Email       |       |
+| Xheni | Shashank |                     |     |     | Tsuki   | Transaction |       |
 
 # Transactions 
 
-| To    | From     | Time                | Notes | Acc |
-| ----- | -------- | ------------------- | ----- | --- |
-| Maya  | Shashank | XX/XX/XXXX/XX:XX:XX |       |     |
-| Xheni | Shashank |                     |       |     |
+| To    | From     | Time                | Notes | Acc | Amount |
+| ----- | -------- | ------------------- | ----- | --- | ------ |
+| Maya  | Shashank | XX/XX/XXXX/XX:XX:XX |       |     |        |
+| Xheni | Shashank |                     |       |     |        |
 
 # Events 
 
@@ -25,11 +35,6 @@
 | -------- | ------- | ------ | ----- | ----- | ------------------- | ------------------- |
 |          |         |        |       |       | XX/XX/XXXX/XX:XX:XX | XX/XX/XXXX/XX:XX:XX |
 |          |         |        |       |       |                     |                     |
-
-
-
-
-
 
 
 
