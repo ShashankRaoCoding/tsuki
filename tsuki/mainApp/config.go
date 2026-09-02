@@ -1,4 +1,4 @@
-package tsuki
+package mainApp
 
 import (
 	"tsuki/utils"
