@@ -4,7 +4,7 @@ import (
 	"log" 
 	"fmt"
 	"os"
-	"tsuki/main"
+	"tsuki/tsuki"
 	tea "github.com/charmbracelet/bubbletea"
 	// _ "github.com/ShashankRaoCoding/tsuki/msgs/msgFuncs"
 )
