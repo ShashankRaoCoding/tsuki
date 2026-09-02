@@ -1,4 +1,4 @@
-package tsuki
+package main
 
 import (
 	"tsuki/tabs" 
