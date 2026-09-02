@@ -17,7 +17,7 @@ func main() {
 	defer f.Close() 
 
 	_, err := tea.NewProgram(
-		main.New(),
+		tsuki.New(),
 		tea.WithAltScreen(), 
 	).Run() 
 
