@@ -32,7 +32,7 @@ func LoadApps(filePath string) ([]AppConfig, error) {
 		appConfigs = append(appConfigs, c) 
 	}
 
-	return appConfigs 
+	return appConfigs , err 
 }
 
 
