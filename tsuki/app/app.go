@@ -1,6 +1,6 @@
 package app 
 
-type App struct {
+type Main struct {
 	Tabs []*tabs.Tab,
 
 	
