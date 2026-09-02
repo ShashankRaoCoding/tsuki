@@ -15,11 +15,11 @@ func init() {
 }
 
 func LoadApps(filePath string) ([]AppConfig, error) {
-	_appConfig  := []any{} 
+	_appConfigs := []any{} 
 	appConfigs := []AppConfig {} 
 	var err error 
 
-	_appConfigs, err = utils.ReadDirToStructs(
+	err = utils.ReadDirToStructs(
 		filePath,
 		func() AppConfig{
 			return AppConfig{} 
