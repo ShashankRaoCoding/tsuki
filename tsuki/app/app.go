@@ -12,7 +12,9 @@ func (a App) Init() tea.Cmd {
 	
 }
 
-
+func (a App) Update(m tea.Msg) (tea.Model, tea.Cmd) {
+	
+}
 
 
 
