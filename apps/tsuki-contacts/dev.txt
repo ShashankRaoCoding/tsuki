@@ -1,7 +1,13 @@
 # About
 
 CLI app that
-1. Reads .tsuki/data
+1. Reads .tsuki/data/
+	emails.db //to and from 
+	transactions.db //to and from 
+	events.db //people 
+	notes.db //people
+	
+
 2. Contructs contacts and connections
 3. UI to change these contacts and connections 
 
@@ -26,9 +32,23 @@ _____________________________________________________
 | Email                 |  real.email@fakeEmail.com |
 |---------------------------------------------------|
 | Phone                 | +0 12345 67890            |
-|
-| Age:
-21
+
+
+
+
+Shashank Rao
+@fakeemail.com
++00 01233456789
+
+Likes to code
+
+Emails Unread: // select * where name = name and status = unread
+
+
+
+Emails Awaiting Response:
+
+
 
 About:
 Likes coding
