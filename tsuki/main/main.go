@@ -39,7 +39,8 @@ func (m Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	_m, c := f(m, msg)
-	m, _ = 
+	m, _ = _m.(Main) 
+	return m, c
 }
 
 
