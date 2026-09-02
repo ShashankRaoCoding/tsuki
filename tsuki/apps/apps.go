@@ -15,7 +15,7 @@ func init() {
 }
 
 func LoadApps(filePath string) ([]AppConfig, error) {
-	appConfig  := []AppConfig {} 
+	_appConfig  := []any{} 
 	appConfigs := []AppConfig {} 
 	var err error 
 
