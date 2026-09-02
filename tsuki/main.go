@@ -7,7 +7,7 @@ import (
 	"log" 
 )
 
-func mian() {
+func main() {
 	
 }
 
