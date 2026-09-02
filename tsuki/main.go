@@ -11,6 +11,8 @@ func main() {
 	f, err := os.Create(".tsuki/logs.txt") 
 	if err == nil {
 		log.SetOutput(f) 
+	} else {
+		fmt.Println("Error: %s", err, ", printing logs to stdout") 
 	}
 }
 
