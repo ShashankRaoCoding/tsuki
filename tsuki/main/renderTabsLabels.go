@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/ShashankRaoCoding/tsuki/tabs" 
+	"tsuki/tabs" 
 )
 
 func renderTabLabels(a App) []string {
