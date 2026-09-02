@@ -1,4 +1,4 @@
-package mainApp
+package main
 
 import (
 	"log"
