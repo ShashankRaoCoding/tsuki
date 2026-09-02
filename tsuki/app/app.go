@@ -8,6 +8,10 @@ type Main struct {
 	
 }
 
+func New() Main {
+	
+}
+
 func (a App) Init() tea.Cmd {
 	
 }
