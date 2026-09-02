@@ -16,6 +16,7 @@ The app works on a view edit model
 
 Views
 This is a page. If a contact isn't selected, this can be simply:
+```
 ___________________________________________________________________________________
 | Name | Most Recent Contact | Emails Pending Response | Emails Awaiting Response |
 |---------------------------------------------------------------------------------|
@@ -23,9 +24,9 @@ ________________________________________________________________________________
 |---------------------------------------------------------------------------------|
 | B    | 2 days ago          | 0                       | 2                        |
 |---------------------------------------------------------------------------------|
-
+```
 If a contact is selected:
-
+```
 _____________________________________________________
 | Name                  | Shashank Rao              |
 |---------------------------------------------------|
@@ -33,9 +34,9 @@ _____________________________________________________
 |---------------------------------------------------|
 | Phone                 | +0 12345 67890            |
 
+```
 
-
-
+```
 Shashank Rao
 @fakeemail.com
 +00 01233456789
@@ -48,16 +49,7 @@ Emails Unread: // select * where name = name and status = unread
 
 Emails Awaiting Response:
 
-
-
-About:
-Likes coding
-
-Most recet contact:
-[[Email to Shashank Rao]]
-______________________________
-
-Click and type to edit
+```
 
 
 
