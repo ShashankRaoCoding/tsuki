@@ -28,7 +28,7 @@ func LoadApps(filePath string) ([]AppConfig, error) {
 	) 
 
 	for _, _c := range _appConfigs {
-		
+		c, _ := _c.(AppConfig) 
 	}
 
 }
