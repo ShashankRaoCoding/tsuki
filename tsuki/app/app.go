@@ -12,16 +12,16 @@ func New() Main {
 	
 }
 
-func (a App) Init() tea.Cmd {
+func (m Main) Init() tea.Cmd {
 	
 }
 
-func (a App) Update(m tea.Msg) (tea.Model, tea.Cmd) {
+func (m Main) Update(m tea.Msg) (tea.Model, tea.Cmd) {
 	
 }
 
 
-func (a App) View() string {
+func (m Main) View() string {
 	
 }
 
