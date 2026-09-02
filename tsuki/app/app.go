@@ -17,7 +17,9 @@ func (a App) Update(m tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 
-
+func (a App) View() string {
+	
+}
 
 
 
