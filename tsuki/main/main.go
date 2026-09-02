@@ -46,6 +46,8 @@ func (m Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Main) View() string {
 	tabLabels := renderLabels(m) 
+	content := m.Tabs[m.Focus].View()
+	return tabLabels + "\n" + content 
 }
 
 
