@@ -3,6 +3,8 @@ package app
 import (
 	"log"
 	tea "github.com/charmbracelet/bubbletea" 
+	msgs "tsuki/msgs"
+	tabs "tsuki/tabs" 
 )
 
 type Main struct {
