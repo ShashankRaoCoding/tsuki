@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/ShashankRaoCoding/tsuki/shared/utils"
+	"tsuki/shared/utils"
 )
 
 type Config struct {
