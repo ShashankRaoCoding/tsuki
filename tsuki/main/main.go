@@ -1,5 +1,10 @@
 package app 
 
+import (
+	"log"
+	tea "github.com/charmbracelet/bubbletea" 
+)
+
 type Main struct {
 	Tabs []*tabs.Tab,
 	Height int
@@ -21,7 +26,7 @@ func New() Main {
 }
 
 func (m Main) Init() tea.Cmd {
-	return nil 
+	
 }
 
 func (m Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
