@@ -22,12 +22,10 @@ func LoadApps(filePath string) ([]AppConfig, error) {
 	err = utils.ReadDirToStructs(
 		filePath,
 		&_appConfigs, 
-		func() any {
+		func() AppConfig{
 			return AppConfig{} 
 		}, 
 	) 
-
-	
 
 }
 
