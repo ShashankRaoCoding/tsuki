@@ -16,7 +16,7 @@ func init() {
 
 func LoadApps(filePath string) ([]AppConfig, error) {
 	appConfig  := []AppConfig {} 
-	var appConfigs []AppConfig 
+	appConfigs := []AppConfig {} 
 	var err error 
 
 	appConfigs, err = utils.ReadDirToStructs(
