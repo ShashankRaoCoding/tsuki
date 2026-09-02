@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	Msg2Func["msgFuncs.ErrMsg"] = ErrFunc
+	Msg2Func["msgs.ErrMsg"] = ErrFunc
 }
 
 func ErrFunc(a tea.Model, m tea.Msg) (tea.Model, tea.Cmd) {
