@@ -1,0 +1,51 @@
+package msgs
+
+import "github.com/charmbracelet/bubbletea" 
+
+type MsgFunc func(tea.Model, tea.Msg) (tea.Model, tea.Cmd) 
+
+var Msg2Func = map[string]MsgFunc{} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
