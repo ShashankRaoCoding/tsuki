@@ -1,34 +1,54 @@
-package main
+package mainApp
 
 import (
-	"log" 
-	"fmt"
-	"os"
-	"tsuki/tsuki"
-	tea "github.com/charmbracelet/bubbletea"
-	// _ "github.com/ShashankRaoCoding/tsuki/msgs/msgFuncs"
+	"log"
+	tea "github.com/charmbracelet/bubbletea" 
+	msgs "tsuki/msgs"
+	tabs "tsuki/tabs" 
 )
 
-func main() {
-	f, err := os.Create(".tuski/errors") 
-	if err == nil {
-			log.SetOutput(f) 
+type Main struct {
+	Tabs []*tabs.Tab,
+	Height int
+	Width int
+	Focus int 
+	
+}
+
+func New() Main {
+	m := Main{}
+	m.Tabs = append(
+		m.Tabs,
+		tabs.New(
+			apps.Apps["New Tab"], 
+		), 
+	)
+
+	return m 
+}
+
+func (m Main) Init() tea.Cmd {
+	log.Println("Init") 
+	return nil 
+}
+
+func (m Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	f, o := msgs.Msg2Func[fmt.Sprintf("%t", msg)) ]
+	if o == false {
+		f, _ = msgs.Msg2Func["msgs.ErrMsg"] 
 	}
-	defer f.Close() 
 
-	_, err := tea.NewProgram(
-		tsuki.New(),
-		tea.WithAltScreen(), 
-	).Run() 
-
-	log.Println(err.Error()) 
-	os.Exit(0) 
+	_m, c := f(m, msg)
+	m, _ = _m.(Main) 
+	return m, c
 }
 
 
-
-
-
+func (m Main) View() string {
+	tabLabels := renderLabels(m) 
+	content := m.Tabs[m.Focus].View()
+	return tabLabels + "\n" + content 
+}
 
 
 
