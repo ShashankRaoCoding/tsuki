@@ -37,6 +37,9 @@ func (m Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	if o == false {
 		f, _ = msgs.Msg2Func["msgs.ErrMsg"] 
 	}
+
+	_m, c := f(m, msg)
+	m, _ = 
 }
 
 
