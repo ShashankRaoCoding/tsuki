@@ -19,6 +19,8 @@ func main() {
 		New(),
 		tea.WithAltScreen(), 
 	)
+
+	err = t.Run() 
 }
 
 
