@@ -10,8 +10,12 @@ var Apps map[string]AppConfig
 
 type AppConfig map[string]string 
 
+func init() {
+	
+}
+
 func LoadApps(filePath string) ([]AppConfig, error) {
-	var appConfig  = AppConfig {} 
+	appConfig  := []AppConfig {} 
 	var appConfigs []AppConfig 
 	var err error 
 
