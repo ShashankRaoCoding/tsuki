@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	
+	f, err := os.Create(".tsuki/logs.txt") 
 }
 
 
