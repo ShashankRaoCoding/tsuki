@@ -1,6 +1,7 @@
 package app 
 
 type App struct {
+	Tabs []*tab.Tab,
 	
 }
 
