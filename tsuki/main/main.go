@@ -9,7 +9,15 @@ type Main struct {
 }
 
 func New() Main {
-	
+	m := Main{}
+	m.Tabs = append(
+		m.Tabs,
+		tabs.New(
+			apps.Apps["New Tab"], 
+		), 
+	)
+
+	return m 
 }
 
 func (m Main) Init() tea.Cmd {
