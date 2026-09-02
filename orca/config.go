@@ -1,7 +1,7 @@
 package main
 
 import (
-	"tsuki/utils"
+	"orca/utils"
 )
 
 type Config struct {

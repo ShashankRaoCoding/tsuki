@@ -3,7 +3,7 @@ package appsConfig
 import (
 	"fmt"
 	"os" 
-	utils "tsuki/utils"
+	utils "orca/utils"
 )
 
 var Apps map[string]AppConfig 

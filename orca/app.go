@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 	tea "github.com/charmbracelet/bubbletea" 
-	msgs "tsuki/msgs"
-	tabs "tsuki/tabs" 
+	msgs "orca/msgs"
+	tabs "orca/tabs" 
 )
 
 type Main struct {

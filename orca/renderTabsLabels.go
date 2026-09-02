@@ -1,11 +1,11 @@
 package main
 
 import (
-	"tsuki/tabs" 
+	"orca/tabs" 
 )
 
 func renderTabLabels(a App) []string {
-	logo := " Tsuki" 
+	logo := " orca" 
 	labels  := []string{} 
 	labelWidth := (a.Width - 2 - len(logo)  - (len(" | ") * len(a.Tabs))) / len(a.Tabs)
 	for _, tab := range a.Tabs {
