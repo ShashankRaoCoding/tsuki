@@ -14,6 +14,11 @@ func main() {
 	} else {
 		fmt.Println("Error: %s", err, ", printing logs to stdout") 
 	}
+
+	t := tea.NewProgram(
+		New(),
+		tea.WithAltScreen(), 
+	)
 }
 
 
