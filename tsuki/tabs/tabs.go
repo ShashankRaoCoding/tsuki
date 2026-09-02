@@ -1,7 +1,7 @@
 package tabs
 
 import (
-	labels "orca/tabs/labels" 
+	labels "tsuki/tabs/labels" 
 )
 
 type Tab struct {
