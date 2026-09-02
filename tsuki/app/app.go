@@ -8,7 +8,9 @@ type Main struct {
 	
 }
 
-
+func (a App) Init() tea.Cmd {
+	
+}
 
 
 
