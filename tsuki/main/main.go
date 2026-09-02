@@ -21,7 +21,7 @@ func New() Main {
 }
 
 func (m Main) Init() tea.Cmd {
-	
+	return nil 
 }
 
 func (m Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
