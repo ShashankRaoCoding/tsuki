@@ -28,7 +28,8 @@ func New() Main {
 }
 
 func (m Main) Init() tea.Cmd {
-	
+	log.Println("Init") 
+	return nil 
 }
 
 func (m Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
