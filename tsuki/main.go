@@ -9,9 +9,8 @@ import (
 
 func main() {
 	f, err := os.Create(".tsuki/logs.txt") 
-	if t != nil {
-		fmt.Sprintf("Unable to create log file, printing logs to stdout")
-		fmt.Println(err.Error()) 
+	if err == nil {
+		log.SetOutput(f) 
 	}
 }
 
