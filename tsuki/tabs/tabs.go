@@ -1,7 +1,7 @@
 package tabs
 
 import (
-	labels "github.com/ShashankRaoCoding/tsuki/tabs/labels" 
+	labels "tsuki/tabs/labels" 
 )
 
 type Tab struct {
