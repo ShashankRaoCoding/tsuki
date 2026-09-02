@@ -16,7 +16,7 @@ func (m Main) Init() tea.Cmd {
 	
 }
 
-func (m Main) Update(m tea.Msg) (tea.Model, tea.Cmd) {
+func (m Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	
 }
 
