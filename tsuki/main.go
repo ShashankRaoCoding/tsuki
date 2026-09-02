@@ -4,7 +4,7 @@ import (
 	"log" 
 	"fmt"
 	"os"
-	"tsuki/app"
+	"tsuki/main"
 	tea "github.com/charmbracelet/bubbletea"
 	// _ "github.com/ShashankRaoCoding/tsuki/msgs/msgFuncs"
 )
@@ -17,7 +17,7 @@ func main() {
 	defer f.Close() 
 
 	_, err := tea.NewProgram(
-		app.New(),
+		main.New(),
 		tea.WithAltScreen(), 
 	).Run() 
 
