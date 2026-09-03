@@ -30,6 +30,12 @@ func init() {
 			return Config{} 
 		}, 
 	)
+
+	if err == nil {
+		return 
+	}
+
+	panic(err) 
 }
 
 func New() Main {
