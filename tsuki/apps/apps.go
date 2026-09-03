@@ -11,7 +11,7 @@ var Apps map[string]AppConfig
 type AppConfig map[string]string 
 
 func init() {
-	Apps = LoadApps("tsukki/apps/") 
+	Apps = LoadApps(".tsuki/apps/") 
 }
 
 func LoadApps(filePath string) ([]AppConfig, error) {
