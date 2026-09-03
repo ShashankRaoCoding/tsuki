@@ -15,6 +15,23 @@ type Main struct {
 	
 }
 
+type Config struct {
+	AppsDir string 
+	
+}
+
+var ConfigPath = "config.json"
+var CONFIG Config 
+
+func init() {
+	config, err := utils.ReadJSONToStruct(
+		ConfigPath,
+		func() Config {
+			return Config{} 
+		}, 
+	)
+}
+
 func New() Main {
 	m := Main{}
 	m.Tabs = append(
