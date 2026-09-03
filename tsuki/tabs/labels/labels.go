@@ -2,8 +2,8 @@ package labels
 
 type Label string 
 
-func (l Label) Render(w width) string {
-	label , _ := l.(string) 
+func (l Label) Render(w int) string {
+	label := l.Content
 	elipses := "..." 
 
 	if len(label) == 0 {
@@ -23,7 +23,7 @@ func (l Label) Render(w width) string {
 }
 
 func New(label string) Label {
-	l, _ := label.(string) 
+	l := Label{Content: label} 
 	return l 
 }
 
