@@ -5,6 +5,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea" 
 	msgs "tsuki/msgs"
 	tabs "tsuki/tabs" 
+	utils "tsuki/utils" 
 )
 
 type Main struct {
