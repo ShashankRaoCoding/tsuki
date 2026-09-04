@@ -41,7 +41,7 @@ func New() Main {
 	m := Main{}
 	m.Tabs = append(
 		m.Tabs,
-		tabs.New(
+		&tabs.New(
 			apps.Apps["New Tab"], 
 		), 
 	)
