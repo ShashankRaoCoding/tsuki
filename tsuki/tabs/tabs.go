@@ -9,7 +9,7 @@ type Tab struct {
 	Console Console 
 }
 
-type Console {
+type Console struct {
 	
 }
 
