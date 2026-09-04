@@ -9,7 +9,7 @@ func ErrsToErr(errs []error) error {
 	var _errs = []string{} 
 	for _, err := range errs {
 		if err != nil {
-			_errs = append(_errs, err.Err()) 
+			_errs = append(_errs, err.Error()) 
 		}
 	}
 
