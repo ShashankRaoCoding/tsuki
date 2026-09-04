@@ -1,7 +1,7 @@
 package utils 
 
 import (
-	"fmt" 
+	// "fmt" 
 	"os"
 	"io"
 	"encoding/json" 
