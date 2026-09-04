@@ -1,7 +1,7 @@
-package appsConfig
+package apps
 
 import (
-	"fmt"
+	// "fmt"
 	"os" 
 	utils "tsuki/utils"
 )
