@@ -57,7 +57,7 @@ func (m Main) Init() tea.Cmd {
 }
 
 func (m Main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	f, o := msgs.Msg2Func[fmt.Sprintf("%t", msg)) ]
+	f, o := msgs.Msg2Func[fmt.Sprintf("%t", msg) ]
 	if o == false {
 		f, _ = msgs.Msg2Func["msgs.ErrMsg"] 
 	}
