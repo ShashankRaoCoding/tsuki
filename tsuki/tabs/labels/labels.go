@@ -1,6 +1,8 @@
 package labels
 
-type Label string 
+type Label struct {
+	Content string 
+}
 
 func (l Label) Render(w int) string {
 	label := l.Content
