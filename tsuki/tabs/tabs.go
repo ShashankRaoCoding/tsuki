@@ -17,7 +17,7 @@ func (c Console) View() string {
 	return "text" 
 }
 
-func New() *Tab {
+func New(c AppConfig) *Tab {
 	return &Tab{
 		Label: labels.New("New Tab"), 
 	}
