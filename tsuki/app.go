@@ -25,11 +25,9 @@ var ConfigPath = "config.json"
 var CONFIG Config 
 
 func init() {
-	config, err := utils.ReadJSONToStruct(
+	err := utils.ReadJSONToStruct(
 		ConfigPath,
-		func() Config {
-			return Config{} 
-		}, 
+		CONFIG, 
 	)
 
 	if err == nil {
