@@ -39,11 +39,10 @@ func init() {
 
 func New() Main {
 	m := Main{}
+	tab := &tabs.New(apps.Apps["New Tab"])
 	m.Tabs = append(
 		m.Tabs,
-		&tabs.New(
-			apps.Apps["New Tab"], 
-		), 
+		tab, 
 	)
 
 	return m 
