@@ -7,7 +7,7 @@ import (
 	utils "tsuki/utils"
 )
 
-var APPS map[string]AppConfig 
+var APPS = map[string]AppConfig {}
 
 type AppConfig struct {
 	Name string
