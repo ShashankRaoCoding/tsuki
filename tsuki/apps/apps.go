@@ -16,9 +16,11 @@ type AppConfig struct {
 }
 
 func init() {
-	var err error
-	APPS, err = LoadApps(".tsuki/apps/") 
+	apps, err := LoadApps(".tsuki/apps/") 
 	if err == nil {
+		for _, c := range apps {
+			APPS[c.Name] = c 
+		}
 		return 
 	} else {
 		log.Printf("Error: %s\n", err) 
