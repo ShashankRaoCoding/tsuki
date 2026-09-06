@@ -20,7 +20,7 @@ func main() {
 		tea.WithAltScreen(), 
 	)
 
-	err = t.Run() 
+	_, err = t.Run() 
 }
 
 
