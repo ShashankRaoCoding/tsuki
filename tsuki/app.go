@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt" 
 	"log"
 	tea "github.com/charmbracelet/bubbletea" 
 	msgs "tsuki/msgs"
@@ -73,13 +74,13 @@ func (m Main) View() string {
 }
 
 
-func renderTabLabels(a App) []string {
+func renderLabels(a Main) string {
 	logo := " tsuki" 
-	labels  := []string{} 
+	labels  := "" 
 	labelWidth := (a.Width - 2 - len(logo)  - (len(" | ") * len(a.Tabs))) / len(a.Tabs)
 	for _, tab := range a.Tabs {
 		label := tab.Label.Render(labelWidth) 
-		labels = append(labels, label) 
+		labels = labels + label
 	}
 
 	return labels 
