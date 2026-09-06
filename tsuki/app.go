@@ -41,6 +41,7 @@ func init() {
 
 func New() Main {
 	m := Main{}
+	m.Width = 100 
 	tab := tabs.New(apps.APPS["New Tab"])
 	m.Tabs = append(
 		m.Tabs,
@@ -76,11 +77,11 @@ func (m Main) View() string {
 
 func renderLabels(a Main) string {
 	logo := " tsuki" 
-	labels  := "" 
+	labels  := logo //"" 
 	labelWidth := (a.Width - 2 - len(logo)  - (len(" | ") * len(a.Tabs))) / len(a.Tabs)
 	for _, tab := range a.Tabs {
 		label := tab.Label.Render(labelWidth) 
-		labels = labels + label
+		labels = labels + " | " + label
 	}
 
 	return labels 
