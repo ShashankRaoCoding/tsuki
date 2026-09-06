@@ -76,7 +76,7 @@ func (m Main) View() string {
 
 
 func renderLabels(a Main) string {
-	logo := " tsuki" 
+	logo := " tsuki 🌙 " 
 	labels  := logo //"" 
 	labelWidth := (a.Width - 2 - len(logo)  - (len(" | ") * len(a.Tabs))) / len(a.Tabs)
 	for _, tab := range a.Tabs {
