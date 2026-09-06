@@ -14,7 +14,7 @@ type Console struct {
 	
 }
 
-func (c Console) View() string {
+func (t Tab) View() string {
 	return "text" 
 }
 
