@@ -29,7 +29,7 @@ var CONFIG Config
 func init() {
 	err := utils.ReadJSONToStruct(
 		ConfigPath,
-		CONFIG, 
+		&CONFIG, 
 	)
 
 	if err == nil {
