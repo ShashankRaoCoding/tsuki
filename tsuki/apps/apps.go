@@ -9,7 +9,11 @@ import (
 
 var APPS map[string]AppConfig 
 
-type AppConfig map[string]string 
+type AppConfig struct {
+	Name string
+	Syntax string
+	About string 
+}
 
 func init() {
 	var err error
