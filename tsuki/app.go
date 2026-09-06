@@ -40,7 +40,7 @@ func init() {
 
 func New() Main {
 	m := Main{}
-	tab := tabs.New(apps.Apps["New Tab"])
+	tab := tabs.New(apps.APPS["New Tab"])
 	m.Tabs = append(
 		m.Tabs,
 		tab, 

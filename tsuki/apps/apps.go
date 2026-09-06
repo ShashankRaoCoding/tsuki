@@ -3,15 +3,23 @@ package apps
 import (
 	// "fmt"
 	"os" 
+	"log" 
 	utils "tsuki/utils"
 )
 
-var Apps map[string]AppConfig 
+var APPS map[string]AppConfig 
 
 type AppConfig map[string]string 
 
 func init() {
-	Apps = LoadApps(".tsuki/apps/") 
+	var err error
+	APPS, err = LoadApps(".tsuki/apps/") 
+	if err == nil {
+		return 
+	} else {
+		log.Printf("Error: %s\n", err) 
+		os.Exit(1) 
+	}
 }
 
 func LoadApps(filePath string) ([]AppConfig, error) {

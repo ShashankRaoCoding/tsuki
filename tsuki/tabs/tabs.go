@@ -2,6 +2,7 @@ package tabs
 
 import (
 	labels "tsuki/tabs/labels" 
+	apps "tsuki/apps" 
 )
 
 type Tab struct {
@@ -17,7 +18,7 @@ func (c Console) View() string {
 	return "text" 
 }
 
-func New(c AppConfig) *Tab {
+func New(c apps.AppConfig) *Tab {
 	return &Tab{
 		Label: labels.New("New Tab"), 
 	}
