@@ -4,6 +4,7 @@ import (
 	"fmt" 
 	"log"
 	tea "github.com/charmbracelet/bubbletea" 
+	lipgloss "github.com/charmbracelet/lipgloss" 
 	msgs "tsuki/msgs"
 	tabs "tsuki/tabs" 
 	utils "tsuki/utils" 
@@ -29,7 +30,7 @@ var CONFIG Config
 func init() {
 	err := utils.ReadJSONToStruct(
 		ConfigPath,
-		CONFIG, 
+		&CONFIG, 
 	)
 
 	if err == nil {
@@ -84,6 +85,7 @@ func renderLabels(a Main) string {
 		labels = labels + " | " + label
 	}
 
+	labels = labelsStyle.Render(labels) 
 	return labels 
 }
 
