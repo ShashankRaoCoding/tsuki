@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/ShashankRaoCoding/kumo/structs/server"
-	"github.com/ShashankRaoCoding/kumo/funcs/initialise"
+	"github.com/ShashankRaoCoding/kumo/server"
+	"github.com/ShashankRaoCoding/kumo/config"
+	"github.com/ShashankRaoCoding/tsuki-server/funcs/initialise"
 	"fmt" 
 	"log"
 	"path/filepath"
@@ -12,14 +13,22 @@ import (
 func main() {
 	var err error 
 
-	s, err := server.New()
+	// create server 
+	dbPath = fmt.Sprintf("%s/.tsuki.db", filepath.Dir(variables.BINARYPATH))
+	s, err := server.New(
+		config.WithDBPath(dbPath),
+	)
 	if err != nil {
 		log.Println(err.Error()) 
 	}
+	
+	// initialise database  
+	err = initialise.DBSchema(s.DB)
+	if err != nil {
+		log.Println(err.Error())
+	}
 
-	s.Config.DBPath = fmt.Sprintf("%s/.tsuki.db", filepath.Dir(variables.BINARYPATH))
-	initialise.DB(s)
-
+	// start server 
 	log.Println(s.Listener.Addr()) 
 	s.Start() 
 
