@@ -1,4 +1,4 @@
-package initialise
+package main
 
 import (
 	"database/sql"
@@ -39,7 +39,7 @@ CREATE INDEX idx_emails_name       ON emails(name_id, date);
 CREATE INDEX idx_contacts_name     ON contacts(name_id);
 `
 
-func DBSchema(db *sql.DB) error {
+func initialiseDBSchema(db *sql.DB) error {
 	var err error
 
 	// initialise schema for the database
