@@ -1,4 +1,4 @@
-module tsuki-server
+module tsuki
 
 go 1.27.0
 

@@ -1,8 +1,8 @@
-package initialise 
+package initialise
 
 import (
-	"log" 
 	"database/sql"
+	"log"
 )
 
 // this file initialises databases required by tsuki
@@ -39,53 +39,14 @@ CREATE INDEX idx_emails_name       ON emails(name_id, date);
 CREATE INDEX idx_contacts_name     ON contacts(name_id);
 `
 
-
-func DBSchema( *sql.DB) error {
-	var err error 
+func DBSchema(db *sql.DB) error {
+	var err error
 
 	// initialise schema for the database
-	err = .Exec(Schema)
+	_, err = db.Exec(Schema)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	return err 
+	return err
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
