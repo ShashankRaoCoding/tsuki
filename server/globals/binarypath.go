@@ -1,54 +1,16 @@
-package variables 
+package globals
 
 import (
 	"os"
-	"path/filepath"
 )
 
 var BINARYPATH string
 
 func init() {
-	BINARYPATH, err := os.Executable()
+	var err error
+
+	BINARYPATH, err = os.Executable()
 	if err != nil {
 		panic(err)
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
