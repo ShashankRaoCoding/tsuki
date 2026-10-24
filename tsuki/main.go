@@ -1,66 +1,33 @@
 package main
 
 import (
-	tea "github.com/charmbracelet/bubbletea" 
-	"os"
 	"fmt"
-	"log" 
+	"github.com/ShashankRaoCoding/kumo/config"
+	"github.com/ShashankRaoCoding/kumo/server"
+	"log"
+	"path/filepath"
 )
 
 func main() {
-	f, err := os.Create(".tsuki/logs.txt") 
-	if err == nil {
-		log.SetOutput(f) 
-	} else {
-		fmt.Println("Error: %s", err, ", printing logs to stdout") 
+	var err error
+
+	// create server
+	dbPath := fmt.Sprintf("%s/.tsuki.db", filepath.Dir(variables.BINARYPATH))
+	s, err := server.New(
+		config.WithDBPath(dbPath),
+	)
+	if err != nil {
+		log.Println(err.Error())
 	}
 
-	t := tea.NewProgram(
-		New(),
-		tea.WithAltScreen(), 
-	)
+	// initialise database
+	err = initialiseDBSchema(s.DB)
+	if err != nil {
+		log.Println(err.Error())
+	}
 
-	_, err = t.Run() 
+	// start server
+	log.Println(s.Listener.Addr())
+	s.Start()
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
