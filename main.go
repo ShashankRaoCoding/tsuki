@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ShashankRaoCoding/kumo/config"
 	"github.com/ShashankRaoCoding/kumo/server"
+	"github.com/ShashankRaoCoding/tsuki/globals"
 	"log"
 	"path/filepath"
 )
@@ -12,7 +13,7 @@ func main() {
 	var err error
 
 	// create server
-	dbPath := fmt.Sprintf("%s/.tsuki.db", filepath.Dir(variables.BINARYPATH))
+	dbPath := fmt.Sprintf("%s/.tsuki.db", filepath.Dir(globals.BINARYPATH))
 	s, err := server.New(
 		config.WithDBPath(dbPath),
 	)
