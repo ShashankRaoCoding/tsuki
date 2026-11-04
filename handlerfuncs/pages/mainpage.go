@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"github.com/ShashankRaoCoding/tsuki/globals"
 	"github.com/ShashankRaoCoding/kumo"
+	_ "github.com/ShashankRaoCoding/tsuki/handlerfuncs"
 )
 
 func init() {
