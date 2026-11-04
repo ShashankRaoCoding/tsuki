@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 )
 
-//go:embed static/
+//go:embed static 
 var FS embed.FS 
 
 func init() { 
