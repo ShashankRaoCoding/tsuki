@@ -1,19 +1,19 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"github.com/ShashankRaoCoding/kumo"
 	"github.com/ShashankRaoCoding/tsuki/globals"
 	"log"
-	"embed" 
 	"path/filepath"
 )
 
-//go:embed static 
-var FS embed.FS 
+//go:embed static
+var FS embed.FS
 
-func init() { 
-	globals.FS = FS 
+func init() {
+	globals.FS = FS
 }
 
 func main() {
@@ -36,6 +36,9 @@ func main() {
 
 	// start kumo
 	log.Println(s.Listener.Addr())
+
+	s.Paths = globals.PATHS
+
 	s.Start()
 
 }

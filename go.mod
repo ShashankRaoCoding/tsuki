@@ -1,4 +1,4 @@
-module github.com/ShashankRaoCoding/tsuki 
+module github.com/ShashankRaoCoding/tsuki
 
 go 1.27.0
 
