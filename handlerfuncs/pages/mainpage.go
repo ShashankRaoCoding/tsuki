@@ -1,10 +1,10 @@
-package handlerfuncs 
+package handlerfuncs
 
 import (
-	"net/http"
-	"github.com/ShashankRaoCoding/tsuki/globals"
 	"github.com/ShashankRaoCoding/kumo"
-	_ "github.com/ShashankRaoCoding/tsuki/handlerfuncs"
+	"github.com/ShashankRaoCoding/tsuki/globals"
+	"net/http"
+	// _ "github.com/ShashankRaoCoding/tsuki/handlerfuncs"
 )
 
 func init() {
@@ -14,43 +14,6 @@ func init() {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	// serve the index.html file 
-	kumo.ServeFromEmbed(w, r, globals.FS, "static/index.html") 
+	// serve the index.html file
+	kumo.ServeFromEmbed(w, r, globals.FS, "static/index.html")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
