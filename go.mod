@@ -2,7 +2,7 @@ module github.com/ShashankRaoCoding/tuski
 
 go 1.27.0
 
-require github.com/ShashankRaoCoding/kumo v0.0.4
+require github.com/ShashankRaoCoding/kumo v0.1.0
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
