@@ -7,19 +7,19 @@ import (
 
 // this file initialises databases required by tsuki
 const Schema = `
-CREATE TABLE names (
+CREATE TABLE IF NOT EXISTS names (
   id   INTEGER PRIMARY KEY,
   name TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE transactions (
+CREATE TABLE IF NOT EXISTS transactions (
   id       INTEGER PRIMARY KEY,
   name_id  INTEGER NOT NULL REFERENCES names(id) ON DELETE CASCADE,
   amount   REAL NOT NULL,
   date     TEXT NOT NULL
 );
 
-CREATE TABLE emails (
+CREATE TABLE IF NOT EXISTS emails (
   id       INTEGER PRIMARY KEY,
   name_id  INTEGER NOT NULL REFERENCES names(id) ON DELETE CASCADE,
   subject  TEXT,
@@ -27,7 +27,7 @@ CREATE TABLE emails (
   date     TEXT NOT NULL
 );
 
-CREATE TABLE contacts (
+CREATE TABLE IF NOT EXISTS contacts (
   id            INTEGER PRIMARY KEY,
   name_id       INTEGER NOT NULL REFERENCES names(id) ON DELETE CASCADE,
   email_address TEXT,
