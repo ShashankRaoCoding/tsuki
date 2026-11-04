@@ -6,6 +6,7 @@ import (
 	"github.com/ShashankRaoCoding/kumo"
 	"github.com/ShashankRaoCoding/tsuki/globals"
 	"log"
+	_ "github.com/ShashankRaoCoding/tsuki/handlerfuncs"
 	"path/filepath"
 )
 
