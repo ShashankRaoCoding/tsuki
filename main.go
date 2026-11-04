@@ -2,20 +2,27 @@ package main
 
 import (
 	"fmt"
-	"github.com/ShashankRaoCoding/kumo/config"
-	"github.com/ShashankRaoCoding/kumo/server"
+	"github.com/ShashankRaoCoding/kumo"
 	"github.com/ShashankRaoCoding/tsuki/globals"
 	"log"
+	"embed" 
 	"path/filepath"
 )
+
+//go:embed static/
+var FS embed.FS 
+
+func init() { 
+	globals.FS = FS 
+}
 
 func main() {
 	var err error
 
-	// create server
+	// create kumo
 	dbPath := fmt.Sprintf("%s/.tsuki.db", filepath.Dir(globals.BINARYPATH))
-	s, err := server.New(
-		config.WithDBPath(dbPath),
+	s, err := kumo.New(
+		kumo.WithDBPath(dbPath),
 	)
 	if err != nil {
 		log.Println(err.Error())
@@ -27,7 +34,7 @@ func main() {
 		log.Println(err.Error())
 	}
 
-	// start server
+	// start kumo
 	log.Println(s.Listener.Addr())
 	s.Start()
 
