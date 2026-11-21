@@ -7,9 +7,12 @@ import (
 )
 
 func init() {
+	// index
 	globals.PATHS["/"] = indexHandler
 	globals.PATHS["/index"] = indexHandler
 	globals.PATHS["/index.html"] = indexHandler
+
+	//
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
